@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")  .setHandshakeHandler(new DefaultHandshakeHandler() {
+        registry.addEndpoint("/ws").setHandshakeHandler(new DefaultHandshakeHandler() {
             public boolean beforeHandshake(
                     ServerHttpRequest request,
                     ServerHttpResponse response,
@@ -35,7 +35,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     attributes.put("sessionId", session.getId());
                 }
                 return true;
-            }}).withSockJS();
+            }
+        }).setAllowedOriginPatterns("*").withSockJS();
     }
 
     @Override

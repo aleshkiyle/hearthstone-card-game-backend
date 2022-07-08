@@ -11,6 +11,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import ru.tinkoff.cardgame.lobby.exceptions.LobbyException;
 import ru.tinkoff.cardgame.lobby.model.LobbiesProvider;
 import ru.tinkoff.cardgame.lobby.model.Lobby;
@@ -20,6 +21,7 @@ import ru.tinkoff.cardgame.lobby.model.WSLobbyMessage;
 import java.util.Optional;
 
 @Controller
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class LobbyController {
 
     @Autowired
@@ -89,6 +91,16 @@ public class LobbyController {
     public String handleException(Throwable exception) {
         logger.info("Error: " + exception.getMessage());
         return exception.getMessage();
+    }
+
+    /*
+    test method for angular
+     */
+    @MessageMapping("/test.test")
+    public void test() {
+        logger.info("ANGULAR WORK");
+        Lobby lobby = new Lobby("1", 4);
+        simpMessagingTemplate.convertAndSend("/topic/public/test", lobby );
     }
 
 }
