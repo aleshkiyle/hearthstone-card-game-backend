@@ -3,7 +3,7 @@ package ru.tinkoff.cardgame.lobby.model;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public enum LobbiesSingleton {
+public enum LobbiesProvider {
     INSTANCE;
     private final CopyOnWriteArrayList<Lobby> lobbies = new CopyOnWriteArrayList<>();
 

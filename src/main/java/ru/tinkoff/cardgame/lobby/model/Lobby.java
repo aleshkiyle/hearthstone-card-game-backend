@@ -40,27 +40,21 @@ public class Lobby {
     }
 
     public void addUser(Player player) throws LobbyException {
-        //synchronized (users) {
-        if (players.size() < playerCount & !checkUserInList(player)) {
+        if (players.size() < playerCount & !checkUserInList(player.getSessionId())) {
             players.add(player);
         } else {
             throw new LobbyException();
         }
-        //  }
     }
 
-    public void removeUser(Player player) throws LobbyException {
-        //synchronized () {
-        if (players.size() > 0 & checkUserInList(player)) {
-            players.removeIf(p->p.getSessionId().equals(player.getSessionId()));
-        }
-        //}
+    private boolean checkUserInList(String sessionId) {
+        return players.stream().anyMatch(p -> p.getSessionId().equals(sessionId));
     }
 
-    private boolean checkUserInList(Player player) {
-        return players.stream().anyMatch(p -> p.getSessionId().equals(player.getSessionId()));
-
+    public void removeUser(String sessionId) {
+        players.removeIf(p -> p.getSessionId().equals(sessionId));
     }
+
 
     public void start() throws LobbyException {
         if (this.status == LobbyStatus.CREATED) {

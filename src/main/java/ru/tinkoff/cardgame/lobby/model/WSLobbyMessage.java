@@ -29,4 +29,11 @@ public class WSLobbyMessage {
         this.lobbyId = lobbyId;
     }
 
+    @Override
+    public String toString() {
+        return "WSLobbyMessage{" +
+                "username='" + username + '\'' +
+                ", lobbyId='" + lobbyId + '\'' +
+                '}';
+    }
 }

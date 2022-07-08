@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import ru.tinkoff.cardgame.lobby.exceptions.LobbyException;
-import ru.tinkoff.cardgame.lobby.model.LobbiesSingleton;
+import ru.tinkoff.cardgame.lobby.model.LobbiesProvider;
 import ru.tinkoff.cardgame.lobby.model.Lobby;
 import ru.tinkoff.cardgame.lobby.model.Player;
 import ru.tinkoff.cardgame.lobby.model.WSLobbyMessage;
@@ -38,22 +38,18 @@ public class WebSocketEventListener {
 
         WSLobbyMessage lobbyMessage = (WSLobbyMessage) headerAccessor.getSessionAttributes().get("lobby");
         String sessionId = (String) headerAccessor.getSessionAttributes().get("sessionId");
-        if (lobbyMessage.getUsername() != null) {
-            Optional<Lobby>  lobby = LobbiesSingleton.INSTANCE.findLobby(lobbyMessage.getLobbyId());
-            if (LobbiesSingleton.INSTANCE.findLobby(lobbyMessage.getLobbyId()).isPresent()) {
-                try {
-                    lobby.get().removeUser(new Player(lobbyMessage.getUsername(), sessionId));
-                } catch (LobbyException e) {
-                    throw new RuntimeException(e);
-                }
-                logger.info("LEAVE " + lobby);
 
-                if (lobby.get().getPlayers().size() == 0) {
-                    LobbiesSingleton.INSTANCE.getLobbies().remove(lobby.get());
-                    logger.info("REMOVE lobby " + lobby);
-                }
-                messagingTemplate.convertAndSend("/topic/public/" + lobby.get().getId(), lobby);
+        Optional<Lobby> lobby = LobbiesProvider.INSTANCE.findLobby(lobbyMessage.getLobbyId());
+        if (LobbiesProvider.INSTANCE.findLobby(lobbyMessage.getLobbyId()).isPresent()) {
+
+            lobby.get().removeUser(sessionId);
+            logger.info("LEAVE " + lobby);
+
+            if (lobby.get().getPlayers().size() == 0) {
+                LobbiesProvider.INSTANCE.getLobbies().remove(lobby.get());
+                logger.info("REMOVE lobby " + lobby);
             }
+            messagingTemplate.convertAndSend("/topic/public/" + lobby.get().getId(), lobby);
         }
     }
 

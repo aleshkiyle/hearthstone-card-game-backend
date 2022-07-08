@@ -55,7 +55,13 @@ function onError(payload) {
 
 function onCreated() {
     stompClient.subscribe('/user/queue/errors', onError);
-    stompClient.subscribe('/topic/public/' + lobbyId, onMessageReceived);
+    stompClient.subscribe('/user/queue/create', function (payload) {
+        let lobby = JSON.parse(payload.body);
+        stompClient.subscribe('/topic/public/' + lobby.id, onMessageReceived);
+        console.log('!!!' + lobby.id);
+        onMessageReceived(payload);
+    });
+
 
     stompClient.send("/app/lobby.create",
         {},
@@ -81,7 +87,7 @@ function onConnectedError(error) {
 }
 
 function onMessageReceived(payload) {
-    var lobby = JSON.parse(payload.body);
+    let lobby = JSON.parse(payload.body);
     joiningLobbyForm.classList.add('hidden');
     creatingLobbyForm.classList.add('hidden');
     lobbyInfoForm.classList.remove('hidden');
