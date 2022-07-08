@@ -34,7 +34,6 @@ public class LobbyController {
     public Lobby createLobby(@Payload WSLobbyMessage lobbyMessage, SimpMessageHeaderAccessor headerAccessor,
                              @Header("simpSessionId") String sessionId) throws LobbyException {
 
-
         headerAccessor.getSessionAttributes().put("sessionId", sessionId);
         Lobby lobby;
         String lobbyId;
@@ -55,7 +54,6 @@ public class LobbyController {
 
         lobby.addUser(new Player(lobbyMessage.getUsername(), sessionId));
         logger.info("CREATE lobby" + lobby);
-        simpMessagingTemplate.convertAndSend("/topic/public/" + lobby.getId(), lobby);
         return lobby;
     }
 
@@ -71,16 +69,6 @@ public class LobbyController {
         simpMessagingTemplate.convertAndSend("/topic/public/" + lobby.get().getId(), lobby);
     }
 
-//    @MessageMapping("/lobby.leave")
-//    public void leaveLobby(@Payload WSLobbyMessage lobbyMessage, SimpMessageHeaderAccessor headerAccessor,
-//                           @Header("simpSessionId") String sessionId) throws LobbyException {
-//        Lobby lobby = LobbiesProvider.INSTANCE.findLobby(lobbyMessage.getLobbyId()).get();
-//        lobby.removeUser(sessionId);
-//        logger.info(lobby.toString());
-//        logger.info("LEAVE " + lobby);
-//        simpMessagingTemplate.convertAndSend("/topic/public/" + lobby.getId(), lobby);
-//    }
-
     @MessageMapping("/lobby.start")
     public void startGame(@Payload WSLobbyMessage lobbyMessage, SimpMessageHeaderAccessor headerAccessor) {
         // TODO: 07.07.2022
@@ -91,16 +79,6 @@ public class LobbyController {
     public String handleException(Throwable exception) {
         logger.info("Error: " + exception.getMessage());
         return exception.getMessage();
-    }
-
-    /*
-    test method for angular
-     */
-    @MessageMapping("/test.test")
-    public void test() {
-        logger.info("ANGULAR WORK");
-        Lobby lobby = new Lobby("1", 4);
-        simpMessagingTemplate.convertAndSend("/topic/public/test", lobby );
     }
 
 }

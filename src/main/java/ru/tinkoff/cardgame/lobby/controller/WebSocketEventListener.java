@@ -31,7 +31,7 @@ public class WebSocketEventListener {
     }
 
     // FIXME: 07.07.2022
-    // rewrite this code
+    // refactor this code
     @EventListener
     public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
