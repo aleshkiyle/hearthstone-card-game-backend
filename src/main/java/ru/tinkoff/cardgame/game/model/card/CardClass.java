@@ -1,4 +1,4 @@
-package ru.tinkoff.cardgame.game.model;
+package ru.tinkoff.cardgame.game.model.card;
 
 public enum CardClass {
 

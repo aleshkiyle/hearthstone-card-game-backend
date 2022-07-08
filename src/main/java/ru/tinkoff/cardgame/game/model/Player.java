@@ -1,20 +1,26 @@
 package ru.tinkoff.cardgame.game.model;
 
+import ru.tinkoff.cardgame.game.model.card.Card;
+
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Player {
+
+    private final int id;
     private int hp;
     private int gold;
-    private List<Card> activeCards;
-    private List<Card> invCards;
-    private Shop shop;
+    private final CopyOnWriteArrayList<Card> activeCards;
+    private final CopyOnWriteArrayList<Card> invCards;
+    private final Shop shop;
 
-    public Player(int hp, int gold, List<Card> activeCards, List<Card> invCards, Shop shop) {
-        this.hp = hp;
-        this.gold = gold;
-        this.activeCards = activeCards;
-        this.invCards = invCards;
-        this.shop = shop;
+    public Player(int id) {
+        this.id = id;
+        this.hp = 100;
+        this.gold = 0;
+        this.activeCards = new CopyOnWriteArrayList<>();
+        this.invCards = new CopyOnWriteArrayList<>();
+        this.shop = new Shop();
     }
 
     public int getHp() {
@@ -45,15 +51,15 @@ public class Player {
         this.gold = gold;
     }
 
-    public void setActiveCards(List<Card> activeCards) {
-        this.activeCards = activeCards;
-    }
-
-    public void setInvCards(List<Card> invCards) {
-        this.invCards = invCards;
-    }
-
-    public void setShop(Shop shop) {
-        this.shop = shop;
+    @Override
+    public String toString() {
+        return "Player{" +
+                "id=" + id +
+                ", hp=" + hp +
+//                ", gold=" + gold +
+//                ", activeCards=" + activeCards +
+//                ", invCards=" + invCards +
+//                ", shop=" + shop +
+                '}';
     }
 }

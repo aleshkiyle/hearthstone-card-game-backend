@@ -1,16 +1,28 @@
 package ru.tinkoff.cardgame.game.model;
 
 
-import java.util.List;
-
 public class Round {
-private List<Player> players;
+    private final Player firstPlayer;
+    private final Player secondPlayer;
 
-    public List<Player> getPlayers() {
-        return players;
+    public Round(Player firstPlayer, Player secondPlayer) {
+        this.firstPlayer = firstPlayer;
+        this.secondPlayer = secondPlayer;
     }
 
-    public void setPlayers(List<Player> players) {
-        this.players = players;
+    public Player getFirstPlayer() {
+        return firstPlayer;
+    }
+
+    public Player getSecondPlayer() {
+        return secondPlayer;
+    }
+
+    @Override
+    public String toString() {
+        return "Round{" +
+                "firstPlayer=" + firstPlayer +
+                ", secondPlayer=" + secondPlayer +
+                '}';
     }
 }
