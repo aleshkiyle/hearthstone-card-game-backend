@@ -1,11 +1,13 @@
 package ru.tinkoff.cardgame.game.model.card;
 
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public enum CardProvider {
     INSTANCE;
 
-    private final CopyOnWriteArrayList<Card> cards = new CopyOnWriteArrayList<>();
+    private final ArrayList<Card> cards = new ArrayList<>();
 
     CardProvider() {
         addCards();
@@ -39,13 +41,15 @@ public enum CardProvider {
         cards.add(new Card("Кошмарное слияние", 3, "Это существо, управляемое механизмами, одновременно и ведьма, и дракон, и демон, и великан.", 6, 9, Spell.SPELL1, 5, CardClass.Machine));
     }
 
-    public CopyOnWriteArrayList<Card> getCards() {
+    public ArrayList<Card> getCards() {
         return cards;
     }
 
-    public Card getRandomLvlCard(int lvl) {
-        // TODO: 09.07.2022  
-        return null;
+    public Card getRandomLvlCard(int maxLvl) {
+        List<Card> cards = this.cards.stream().filter(c->c.getLvl()<=maxLvl).toList();
+        // FIXME: 12.07.2022
+        // random
+        return cards.get(new Random().nextInt(cards.size()));
     }
 
 }
