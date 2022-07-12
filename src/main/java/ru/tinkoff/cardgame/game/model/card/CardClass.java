@@ -2,15 +2,11 @@ package ru.tinkoff.cardgame.game.model.card;
 
 public enum CardClass {
 
-    //Beast("Зверь"),
-    //Demon("Демон"),
+    Witch("Ведьма"),
     Dragon("Дракон"),
-    //Elemental("Элементаль"),
-    Mech ("Механизм");
-    //Murloc ("Мурлок"),
-    //Naga ("Нага"),
-    //Pirate ("Пират"),
-    //Quilboar ("Свинобраз");
+    Demon("Демон"),
+    Giant("Великан"),
+    Machine("Машина");
 
     private final String title;
 
