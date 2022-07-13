@@ -84,7 +84,9 @@ public class Game {
     }
 
     public void startRound() {
+
         generateRounds();
+        this.rounds.forEach(Round::test);
         logger.info("START ROUND №" + this.roundNumber);
         logger.info(this.rounds.toString());
         // TODO: 09.07.2022
@@ -104,7 +106,7 @@ public class Game {
         List<Player> playerList = new LinkedList<>(this.players);
         Collections.shuffle(playerList);
         for (int i = 0; i < playerList.size(); i += 2) {
-            this.rounds.add(new Round(playerList.get(i), playerList.get(i + 1)));
+            this.rounds.add(new Round(playerList.get(i), playerList.get(i + 1), this.simpMessagingTemplate));
         }
     }
 

@@ -3,6 +3,7 @@ package ru.tinkoff.cardgame.lobby.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import ru.tinkoff.cardgame.game.model.Game;
 import ru.tinkoff.cardgame.game.model.GameProvider;
 import ru.tinkoff.cardgame.game.model.Player;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import ru.tinkoff.cardgame.lobby.exceptions.LobbyException;
 import ru.tinkoff.cardgame.lobby.model.LobbiesProvider;
 import ru.tinkoff.cardgame.lobby.model.Lobby;
@@ -22,6 +25,7 @@ import ru.tinkoff.cardgame.lobby.model.User;
 import ru.tinkoff.cardgame.lobby.model.WSLobbyMessage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -31,6 +35,18 @@ public class LobbyController {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     private static final Logger logger = LoggerFactory.getLogger(LobbyController.class);
+
+    @GetMapping("/lobby.check")
+    public ResponseEntity<String> checkLobby(@RequestParam("id") String id){
+        Optional<Lobby> lobby = LobbiesProvider.INSTANCE.getLobbies().stream()
+                .filter(x -> x.getId().equals(id))
+                .findAny();
+        if(lobby.isPresent()){
+            return ResponseEntity.ok("OK");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
     @MessageMapping("/lobby.create")
     @SendToUser("/queue/create")
