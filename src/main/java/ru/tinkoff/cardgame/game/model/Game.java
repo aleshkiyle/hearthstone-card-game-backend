@@ -2,6 +2,10 @@ package ru.tinkoff.cardgame.game.model;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessageType;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -10,27 +14,32 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game {
 
-    public static void main(String[] args) {
-        CopyOnWriteArrayList<Player> playersList = new CopyOnWriteArrayList<>();
-        playersList.add(new Player(1));
-        playersList.add(new Player(2));
-        playersList.add(new Player(3));
-        playersList.add(new Player(4));
-        new Game(playersList).startGame();
-    }
+//    public static void main(String[] args) {
+//        CopyOnWriteArrayList<Player> playersList = new CopyOnWriteArrayList<>();
+//        playersList.add(new Player("1"));
+//        playersList.add(new Player("2"));
+//        playersList.add(new Player("3"));
+//        playersList.add(new Player("4"));
+//        new Game("-1", playersList, null).startGame();
+//    }
 
     private static final Logger logger = LoggerFactory.getLogger(Game.class);
-    private final CopyOnWriteArrayList<Player> players;
+
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    private final String id;
+    private final List<Player> players;
     private int roundNumber = 0;
     private final CopyOnWriteArrayList<Round> rounds;
 
-
-    public Game(CopyOnWriteArrayList<Player> players) {
+    public Game(String id, List<Player> players, SimpMessagingTemplate simpMessagingTemplate) {
+        this.id = id;
         this.players = players;
         this.rounds = new CopyOnWriteArrayList<>();
+        this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    public CopyOnWriteArrayList<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
@@ -46,16 +55,32 @@ public class Game {
         return rounds;
     }
 
+    @SendTo()
     public void startGame() {
         logger.info("START GAME");
         players.forEach(p -> p.getShop().updateShop());
         startTimer();
+        //simpMessagingTemplate.convertAndSend("/topic/public/start/" + this.id );
+
+        this.players.forEach(p -> {
+            SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor
+                    .create(SimpMessageType.MESSAGE);
+            headerAccessor.setSessionId(p.getId());
+            headerAccessor.setLeaveMutable(true);
+
+            // TODO: 13.07.2022
+            // send to front
+            // FIXME: 13.07.2022
+            // to do listener
+            simpMessagingTemplate.convertAndSendToUser(p.getId(), "/queue/game/start", p,
+                    headerAccessor.getMessageHeaders());
+        });
 
     }
 
     public void startTimer() {
         logger.info("START TIMER");
-        new Timer(this,4).run();
+        new Thread(new Timer(this, 4)).start();
     }
 
     public void startRound() {
@@ -77,10 +102,8 @@ public class Game {
     public void generateRounds() {
         this.rounds.clear();
         List<Player> playerList = new LinkedList<>(this.players);
-        logger.info("orig: " + this.players);
         Collections.shuffle(playerList);
-        logger.info("copy: " + playerList);
-        for (int i = 0; i < playerList.size(); i+=2) {
+        for (int i = 0; i < playerList.size(); i += 2) {
             this.rounds.add(new Round(playerList.get(i), playerList.get(i + 1)));
         }
     }

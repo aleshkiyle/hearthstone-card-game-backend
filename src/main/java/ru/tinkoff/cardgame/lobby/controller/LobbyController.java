@@ -12,13 +12,16 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import ru.tinkoff.cardgame.game.model.Game;
+import ru.tinkoff.cardgame.game.model.GameProvider;
+import ru.tinkoff.cardgame.game.model.Player;
 import ru.tinkoff.cardgame.lobby.exceptions.LobbyException;
 import ru.tinkoff.cardgame.lobby.model.LobbiesProvider;
 import ru.tinkoff.cardgame.lobby.model.Lobby;
-import ru.tinkoff.cardgame.lobby.model.Player;
+import ru.tinkoff.cardgame.lobby.model.User;
 import ru.tinkoff.cardgame.lobby.model.WSLobbyMessage;
-
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -52,7 +55,7 @@ public class LobbyController {
         lobbyMessage.setLobbyId(lobbyId);
         headerAccessor.getSessionAttributes().put("lobby", lobbyMessage);
 
-        lobby.addUser(new Player(lobbyMessage.getUsername(), sessionId));
+        lobby.addUser(new User(lobbyMessage.getUsername(), sessionId));
         logger.info("CREATE lobby" + lobby);
         return lobby;
     }
@@ -63,11 +66,21 @@ public class LobbyController {
 
         headerAccessor.getSessionAttributes().put("lobby", lobbyMessage);
         headerAccessor.getSessionAttributes().put("sessionId", sessionId);
-        Optional<Lobby> lobby = LobbiesProvider.INSTANCE.findLobby(lobbyMessage.getLobbyId());
-        lobby.get().addUser(new Player(lobbyMessage.getUsername(), sessionId));
+        Lobby lobby = LobbiesProvider.INSTANCE.findLobby(lobbyMessage.getLobbyId()).get();
+        lobby.addUser(new User(lobbyMessage.getUsername(), sessionId));
         logger.info("JOIN lobby" + lobby);
-        simpMessagingTemplate.convertAndSend("/topic/public/" + lobby.get().getId(), lobby);
+        simpMessagingTemplate.convertAndSend("/topic/public/" + lobby.getId(), lobby);
+
+        if (lobby.getUsers().size() == lobby.getPlayerCount()) {
+            List<Player> playerList = new ArrayList<>();
+            lobby.getUsers().forEach(u-> playerList.add(new Player(u.getSessionId())));
+            Game game = new Game(lobby.getId(), playerList, simpMessagingTemplate);
+            GameProvider.INSTANCE.getGames().add(game);
+            game.startGame();
+        }
     }
+
+
 
     @MessageMapping("/lobby.start")
     public void startGame(@Payload WSLobbyMessage lobbyMessage, SimpMessageHeaderAccessor headerAccessor) {

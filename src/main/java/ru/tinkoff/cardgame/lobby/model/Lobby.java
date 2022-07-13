@@ -10,13 +10,13 @@ public class Lobby {
 
     private LobbyStatus status;
 
-    private final CopyOnWriteArrayList<Player> players;
+    private final CopyOnWriteArrayList<User> users;
 
     public Lobby(String id, int playerCount) {
         this.id = id;
         this.playerCount = playerCount;
         this.status = LobbyStatus.CREATED;
-        this.players = new CopyOnWriteArrayList<>();
+        this.users = new CopyOnWriteArrayList<>();
     }
 
     public String getId() {
@@ -35,24 +35,24 @@ public class Lobby {
         this.status = status;
     }
 
-    public CopyOnWriteArrayList<Player> getPlayers() {
-        return players;
+    public CopyOnWriteArrayList<User> getUsers() {
+        return users;
     }
 
-    public void addUser(Player player) throws LobbyException {
-        if (players.size() < playerCount & !checkUserInList(player.getSessionId())) {
-            players.add(player);
+    public void addUser(User user) throws LobbyException {
+        if (users.size() < playerCount & !checkUserInList(user.getSessionId())) {
+            users.add(user);
         } else {
             throw new LobbyException();
         }
     }
 
     private boolean checkUserInList(String sessionId) {
-        return players.stream().anyMatch(p -> p.getSessionId().equals(sessionId));
+        return users.stream().anyMatch(p -> p.getSessionId().equals(sessionId));
     }
 
     public void removeUser(String sessionId) {
-        players.removeIf(p -> p.getSessionId().equals(sessionId));
+        users.removeIf(p -> p.getSessionId().equals(sessionId));
     }
 
 
@@ -78,7 +78,7 @@ public class Lobby {
                 "id='" + id + '\'' +
                 ", playerCount=" + playerCount +
                 ", status=" + status +
-                ", users=" + players +
+                ", users=" + users +
                 '}';
     }
 

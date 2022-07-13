@@ -1,10 +1,10 @@
 package ru.tinkoff.cardgame.lobby.model;
 
-public class Player {
+public class User {
     private String username;
     private String sessionId;
 
-    public Player(String username, String sessionId) {
+    public User(String username, String sessionId) {
         this.username = username;
         this.sessionId = sessionId;
     }
@@ -27,7 +27,7 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
+        return "User{" +
                 "username='" + username + '\'' +
                 ", sessionId='" + sessionId + '\'' +
                 '}';
