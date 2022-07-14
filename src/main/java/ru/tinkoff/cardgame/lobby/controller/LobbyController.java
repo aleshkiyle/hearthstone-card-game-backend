@@ -65,7 +65,7 @@ public class LobbyController {
             } else {
                 lobbyId = String.valueOf(Integer.parseInt(LobbiesProvider.INSTANCE.getLobbies().get(LobbiesProvider.INSTANCE.getLobbies().size() - 1).getId()) + 1);
             }
-            lobby = new Lobby(lobbyId, 4);
+            lobby = new Lobby(lobbyId, 2);
             LobbiesProvider.INSTANCE.getLobbies().add(lobby);
         }
         lobbyMessage.setLobbyId(lobbyId);
@@ -108,6 +108,15 @@ public class LobbyController {
     public String handleException(Throwable exception) {
         logger.info("Error: " + exception.getMessage());
         return exception.getMessage();
+    }
+
+    @MessageMapping("/game/updateShop")
+    public void updateShop(@Payload WSLobbyMessage lobbyMessage, SimpMessageHeaderAccessor headerAccessor,
+                           @Header("simpSessionId") String sessionId) throws LobbyException {
+        headerAccessor.getSessionAttributes().put("lobby", lobbyMessage);
+        headerAccessor.getSessionAttributes().put("sessionId", sessionId);
+        Game game = GameProvider.INSTANCE.findGame(lobbyMessage.getLobbyId());
+        game.updateShop(sessionId);
     }
 
 }

@@ -39,6 +39,10 @@ public class Game {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
+    public String getId() {
+        return id;
+    }
+
     public List<Player> getPlayers() {
         return players;
     }
@@ -75,6 +79,27 @@ public class Game {
             simpMessagingTemplate.convertAndSendToUser(p.getId(), "/queue/game/start", p,
                     headerAccessor.getMessageHeaders());
         });
+
+    }
+
+    @SendTo()
+    public void updateShop(String playerId){
+        Player player = players.stream()
+                .filter(p -> p.getId().equals(playerId))
+                .findFirst()
+                .get();
+        player.getShop().updateShop();
+        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor
+                .create(SimpMessageType.MESSAGE);
+        headerAccessor.setSessionId(player.getId());
+        headerAccessor.setLeaveMutable(true);
+
+        // TODO: 13.07.2022
+        // send to front
+        // FIXME: 13.07.2022
+        // to do listener
+        simpMessagingTemplate.convertAndSendToUser(player.getId(), "/queue/game/updateShop", player,
+                headerAccessor.getMessageHeaders());
 
     }
 

@@ -10,4 +10,11 @@ public enum GameProvider {
     public CopyOnWriteArrayList<Game> getGames() {
         return games;
     }
+
+    public Game findGame(String id){
+        return games.stream()
+                .filter(game -> game.getId().equals(id))
+                .findFirst()
+                .get();
+    }
 }
