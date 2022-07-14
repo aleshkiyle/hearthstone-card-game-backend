@@ -6,10 +6,13 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import ru.tinkoff.cardgame.game.model.card.Card;
+import ru.tinkoff.cardgame.game.model.card.CardProvider;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game {
@@ -63,7 +66,21 @@ public class Game {
     public void startGame() {
         logger.info("START GAME");
         players.forEach(p -> p.getShop().updateShop());
-        startTimer();
+
+        // test values for front
+        players.forEach(p -> {
+            CopyOnWriteArrayList<Card> testCards = new CopyOnWriteArrayList<>();
+            for (int i = 0; i < new Random().nextInt(4); i++) {
+                testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLvl()));
+            }
+            p.setInvCards(testCards);
+            testCards.clear();
+            for (int i = 0; i < new Random().nextInt(4); i++) {
+                testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLvl()));
+            }
+            p.setActiveCards(testCards);
+                });
+        //startTimer();
         //simpMessagingTemplate.convertAndSend("/topic/public/start/" + this.id );
 
         this.players.forEach(p -> {
@@ -82,6 +99,8 @@ public class Game {
 
     }
 
+    // FIXME: 15.07.2022
+    // in game controller
     @SendTo()
     public void updateShop(String playerId){
         Player player = players.stream()

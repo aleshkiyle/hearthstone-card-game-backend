@@ -10,8 +10,8 @@ public class Player {
     private final String id;
     private int hp;
     private int gold;
-    private final CopyOnWriteArrayList<Card> activeCards;
-    private final CopyOnWriteArrayList<Card> invCards;
+    private CopyOnWriteArrayList<Card> activeCards;
+    private CopyOnWriteArrayList<Card> invCards;
     private final Shop shop;
 
     public Player(String id) {
@@ -41,6 +41,14 @@ public class Player {
 
     public List<Card> getInvCards() {
         return invCards;
+    }
+
+    public void setActiveCards(CopyOnWriteArrayList<Card> activeCards) {
+        this.activeCards = activeCards;
+    }
+
+    public void setInvCards(CopyOnWriteArrayList<Card> invCards) {
+        this.invCards = invCards;
     }
 
     public Shop getShop() {
