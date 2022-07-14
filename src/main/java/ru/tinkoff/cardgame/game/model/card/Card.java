@@ -22,6 +22,11 @@ public class Card {
         this.cardClass = cardClass;
     }
 
+    @Override
+    public String toString(){
+        return this.name+" [HP|"+this.hp+" / dmg|"+this.damage+"]";
+    }
+
     public String getName() {
         return name;
     }

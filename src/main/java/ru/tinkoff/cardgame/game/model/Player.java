@@ -1,6 +1,7 @@
 package ru.tinkoff.cardgame.game.model;
 
 import ru.tinkoff.cardgame.game.model.card.Card;
+import ru.tinkoff.cardgame.game.model.card.CardProvider;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -10,10 +11,9 @@ public class Player {
     private final int id;
     private int hp;
     private int gold;
-    private final CopyOnWriteArrayList<Card> activeCards;
+    private CopyOnWriteArrayList<Card> activeCards;
     private final CopyOnWriteArrayList<Card> invCards;
     private final Shop shop;
-
     public Player(int id) {
         this.id = id;
         this.hp = 100;
@@ -21,6 +21,10 @@ public class Player {
         this.activeCards = new CopyOnWriteArrayList<>();
         this.invCards = new CopyOnWriteArrayList<>();
         this.shop = new Shop();
+    }
+
+    public void setActiveCards(CopyOnWriteArrayList<Card> activeCards) {
+        this.activeCards = activeCards;
     }
 
     public int getHp() {
@@ -53,11 +57,11 @@ public class Player {
 
     @Override
     public String toString() {
-        return "Player{" +
+        return "\nPlayer{" +
                 "id=" + id +
                 ", hp=" + hp +
 //                ", gold=" + gold +
-//                ", activeCards=" + activeCards +
+                ", activeCards=" + activeCards +
 //                ", invCards=" + invCards +
 //                ", shop=" + shop +
                 '}';
