@@ -1,6 +1,6 @@
 package ru.tinkoff.cardgame.game.model.card;
 
-public class Card {
+public class Card implements Cloneable{
     private int id;
     private String name;
     private int price;
@@ -20,6 +20,14 @@ public class Card {
         this.spell = spell;
         this.lvl = lvl;
         this.cardClass = cardClass;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -84,5 +92,31 @@ public class Card {
 
     public void setCardClass(CardClass cardClass) {
         this.cardClass = cardClass;
+    }
+
+    @Override
+    public Card clone() {
+        try {
+            Card clone = (Card) super.clone();
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", damage=" + damage +
+                ", hp=" + hp +
+                ", spell=" + spell +
+                ", lvl=" + lvl +
+                ", cardClass=" + cardClass +
+                '}';
     }
 }
