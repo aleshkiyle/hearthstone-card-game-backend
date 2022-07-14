@@ -10,7 +10,7 @@ public class Shop {
 
     private static final int START_SHOP_LVL = 1;
     private static final int MAX_SHOP_LVL = 5;
-    private static final int SHOP_CARD_NUMBER = 5;
+    private static final int SHOP_CARD_NUMBER = 3;
     private final CopyOnWriteArrayList<Card> cardList;
     private boolean freezeStatus;
     private int lvl;
@@ -46,7 +46,7 @@ public class Shop {
     public void updateShop() {
         if (!isFreezeStatus()) {
             this.cardList.clear();
-            for (int i = 0; i < SHOP_CARD_NUMBER; i++) {
+            for (int i = 0; i <= SHOP_CARD_NUMBER; i++) {
                 this.cardList.add(CardProvider.INSTANCE.getRandomLvlCard(this.lvl));
             }
         }
