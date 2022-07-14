@@ -49,7 +49,7 @@ public enum CardProvider {
         List<Card> cards = this.cards.stream().filter(c->c.getLvl()<=maxLvl).toList();
         // FIXME: 12.07.2022
         // random
-        return cards.get(new Random().nextInt(cards.size()));
+        return cards.get(new Random().nextInt(cards.size())).clone();
     }
 
 }
