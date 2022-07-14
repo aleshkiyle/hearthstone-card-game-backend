@@ -29,13 +29,12 @@ public class Round {
     //
     //  11.07
     //
-    public List<Player> startRound(){
+    public void startRound(){
         List<Player> players = new ArrayList<>();
         players.add(firstPlayer);
         players.add(secondPlayer);
         Collections.shuffle(players);
-        players = Attack(players);
-        return players;
+        Attack(players);
     }
 
 
@@ -52,9 +51,9 @@ public class Round {
 
 
 
-    private List<Player> Attack(List<Player> players) {
+    private void Attack(List<Player> players) {
 
-        List<Card> cardsOfAttack = players.get(0).getActiveCards();
+        List<Card> cardsOfAttack =  players.get(0).getActiveCards();
         List<Card> cardsOfDefence = players.get(1).getActiveCards();
 
 
@@ -98,24 +97,18 @@ public class Round {
             //TODO: Удаление карты при атаке(хп атакующей меньше атакуемой)
             int attackIndex = 0;
             int defenceIndex = 0;
-            Map<Card, Boolean> map = new HashMap<>();
-            for (Card card : cardsOfAttack) {
-                map.put(card, false);
-            }
-            int countOfAllCards = getCountMoves(cardsOfAttack, cardsOfDefence);
-            while (cardsOfAttack.size() == 1 && cardsOfDefence.size() == 1) {
-                Game.logger.info("While");
-                Game.logger.info("A|Count of cards = " + cardsOfAttack.size());
 
-                Game.logger.info("D|Count of cards = " + cardsOfDefence.size());
+
+            while (cardsOfAttack.size() >0 && cardsOfDefence.size() >0) {
+                //Game.logger.info("While");
                 //Атака атаки
-
+                if(attackIndex >= cardsOfAttack.size()){
+                    attackIndex = 0;
+                }
                 int index = getRandom(cardsOfDefence.size() - 1); //индекс атакуемой карты
-                Game.logger.info("index = " + index);
-                Game.logger.info("AttackIndex = " + attackIndex);
                 Card attackCard = cardsOfAttack.get(attackIndex);  //карта наносящая урон
                 Card attackedCard = cardsOfDefence.get(index); // карта получающая урон
-
+                //Game.logger.info("Атака атаки | картой ["+attackCard.toString()+"] карту ["+attackedCard.toString()+"]");
                 int hp = attackedCard.getHp();
                 int damage = attackCard.getDamage();
                 int hpA = attackCard.getHp();
@@ -125,6 +118,7 @@ public class Round {
                     //TODO: Отправка на фронт события "уничтожение карты"
                     if (hpA <= damageD) {
                         cardsOfAttack.remove(attackIndex);
+
                     } else {
                         attackCard.setHp(hpA - damageD);
                         cardsOfAttack.set(attackIndex, attackCard);
@@ -146,18 +140,19 @@ public class Round {
                     attackedCard.setHp(hp - damage); //иначе наносим урон
                     cardsOfDefence.set(index, attackedCard); // и заменяем старую карту, на новую с измененными характеристиками
 
-                    Game.logger.info("Урон нанесен картой - " + attackCard.toString() + " по карте - " + attackedCard.toString());
                 }
 
                 attackIndex++;
 
+                if(defenceIndex >= cardsOfDefence.size()){
+                    defenceIndex = 0;
+                }
                 //Атака защиты
-
+                if (cardsOfDefence.size()!=0 && cardsOfAttack.size()!=0){
                 index = getRandom(cardsOfAttack.size() - 1); //индекс атакуемой карты
-                Game.logger.info("index = " + index);
                 attackCard = cardsOfDefence.get(defenceIndex);  //карта наносящая урон
                 attackedCard = cardsOfAttack.get(index); // карта получающая урон
-
+                //Game.logger.info("Атака защиты | картой ["+attackCard.toString()+"] карту ["+attackedCard.toString()+"]");
                 hp = attackedCard.getHp();
                 damage = attackCard.getDamage();
                 hpA = attackCard.getHp();
@@ -170,12 +165,12 @@ public class Round {
                         cardsOfDefence.remove(defenceIndex);
                     } else {
                         attackCard.setHp(hpA - damageD);
-                        cardsOfDefence.set(attackIndex, attackCard);
+                        cardsOfDefence.set(defenceIndex, attackCard);
                     }
                     cardsOfAttack.remove(index);
                     if (index < attackIndex) {
                         attackIndex--;
-
+                    }
 
                     } else {
                         //TODO: Отправка на фронт события "получение урона"
@@ -183,13 +178,12 @@ public class Round {
                             cardsOfDefence.remove(defenceIndex);
                         } else {
                             attackCard.setHp(hpA - damageD);
-                            cardsOfDefence.set(attackIndex, attackCard);
+                            cardsOfDefence.set(defenceIndex, attackCard);
                         }
                         attackedCard.setHp(hp - damage); //иначе наносим урон
                         cardsOfAttack.set(index, attackedCard); // и заменяем старую карту, на новую с измененными характеристиками
 
                     }
-                    Game.logger.info("DefenceIndex = " + defenceIndex);
                     defenceIndex++;
 
 
@@ -218,20 +212,23 @@ public class Round {
 
             if(cardsOfAttack.size()==0 && cardsOfDefence.size()==0){
                 //TODO: Ничья
+                Game.logger.info("Ничья");
                 break;
             }
-            if(attackIndex == cardsOfAttack.size()){
+            if(attackIndex >= cardsOfAttack.size()){
                 attackIndex = 0;
             }
-            if(defenceIndex == cardsOfDefence.size()){
+            if(defenceIndex >= cardsOfDefence.size()){
                     defenceIndex = 0;
                 }
                 //последняя карта(сброс цикла)
 
             //TODO: вернуть на фронт конец раунда
 
-        }}
-        return players;
+        }
+//            Game.logger.info("A | "+cardsOfAttack.toString());
+//            Game.logger.info("D | "+cardsOfDefence.toString());
+        }
     }
 
 

@@ -1,5 +1,6 @@
 package ru.tinkoff.cardgame.game.model;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class Timer implements Runnable {
@@ -19,6 +20,12 @@ public class Timer implements Runnable {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        game.startRound();
+        try {
+            game.startRound();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,6 +1,8 @@
 package ru.tinkoff.cardgame.game.model.card;
 
-public class Card {
+import java.io.Serializable;
+
+public class Card implements Serializable {
     private int id;
     private String name;
     private int price;

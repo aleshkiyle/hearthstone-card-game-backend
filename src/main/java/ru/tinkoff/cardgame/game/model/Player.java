@@ -16,7 +16,7 @@ public class Player {
     private final Shop shop;
     public Player(int id) {
         this.id = id;
-        this.hp = 100;
+        this.hp = 10;
         this.gold = 0;
         this.activeCards = new CopyOnWriteArrayList<>();
         this.invCards = new CopyOnWriteArrayList<>();
