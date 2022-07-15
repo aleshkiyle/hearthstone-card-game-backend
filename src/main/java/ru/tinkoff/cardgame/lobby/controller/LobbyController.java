@@ -115,12 +115,4 @@ public class LobbyController {
         return exception.getMessage();
     }
 
-    @MessageMapping("/game/updateShop")
-    public void updateShop(SimpMessageHeaderAccessor headerAccessor,
-                           @Header("simpSessionId") String sessionId) throws LobbyException {
-        WSLobbyMessage lobbyMessage = (WSLobbyMessage) headerAccessor.getSessionAttributes().get("lobby");
-        Game game = GameProvider.INSTANCE.findGame(lobbyMessage.getLobbyId());
-        game.updateShop(sessionId);
-    }
-
 }
