@@ -46,7 +46,7 @@ public class Shop {
     public void updateShop() {
         if (!isFreezeStatus()) {
             this.cardList.clear();
-            for (int i = 0; i <= SHOP_CARD_NUMBER; i++) {
+            for (int i = 0; i < SHOP_CARD_NUMBER; i++) {
                 this.cardList.add(CardProvider.INSTANCE.getRandomLvlCard(this.lvl));
             }
         }
