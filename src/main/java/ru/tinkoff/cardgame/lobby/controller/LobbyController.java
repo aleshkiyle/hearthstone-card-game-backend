@@ -19,10 +19,8 @@ import ru.tinkoff.cardgame.game.model.Player;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.tinkoff.cardgame.lobby.exceptions.LobbyException;
-import ru.tinkoff.cardgame.lobby.model.LobbiesProvider;
-import ru.tinkoff.cardgame.lobby.model.Lobby;
-import ru.tinkoff.cardgame.lobby.model.User;
-import ru.tinkoff.cardgame.lobby.model.WSLobbyMessage;
+import ru.tinkoff.cardgame.lobby.model.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -83,16 +81,22 @@ public class LobbyController {
         headerAccessor.getSessionAttributes().put("lobby", lobbyMessage);
         headerAccessor.getSessionAttributes().put("sessionId", sessionId);
         Lobby lobby = LobbiesProvider.INSTANCE.findLobby(lobbyMessage.getLobbyId()).get();
-        lobby.addUser(new User(lobbyMessage.getUsername(), sessionId));
-        logger.info("JOIN lobby" + lobby);
-        simpMessagingTemplate.convertAndSend("/topic/public/" + lobby.getId(), lobby);
+        synchronized (lobby) {
+            if (lobby.getUsers().size() < lobby.getPlayerCount() && lobby.getStatus() == LobbyStatus.CREATED) {
 
-        if (lobby.getUsers().size() == lobby.getPlayerCount()) {
-            List<Player> playerList = new ArrayList<>();
-            lobby.getUsers().forEach(u-> playerList.add(new Player(u.getSessionId())));
-            Game game = new Game(lobby.getId(), playerList, simpMessagingTemplate);
-            GameProvider.INSTANCE.getGames().add(game);
-            game.startGame();
+                lobby.addUser(new User(lobbyMessage.getUsername(), sessionId));
+                logger.info("JOIN lobby" + lobby);
+                simpMessagingTemplate.convertAndSend("/topic/public/" + lobby.getId(), lobby);
+
+                if (lobby.getUsers().size() == lobby.getPlayerCount()) {
+                    List<Player> playerList = new ArrayList<>();
+                    lobby.getUsers().forEach(u -> playerList.add(new Player(u.getSessionId())));
+                    Game game = new Game(lobby.getId(), playerList, simpMessagingTemplate);
+                    GameProvider.INSTANCE.getGames().add(game);
+                    game.startGame();
+                    lobby.setStatus(LobbyStatus.STARTED);
+                }
+            }
         }
     }
 
@@ -103,7 +107,7 @@ public class LobbyController {
         // TODO: 07.07.2022
     }
 
-    @MessageExceptionHandler
+    @MessageExceptionHandler(LobbyException.class)
     @SendToUser("/queue/errors")
     public String handleException(Throwable exception) {
         logger.info("Error: " + exception.getMessage());
