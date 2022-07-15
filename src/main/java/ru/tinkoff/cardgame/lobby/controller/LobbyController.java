@@ -107,14 +107,14 @@ public class LobbyController {
     @SendToUser("/queue/errors")
     public String handleException(Throwable exception) {
         logger.info("Error: " + exception.getMessage());
+        exception.printStackTrace();
         return exception.getMessage();
     }
 
     @MessageMapping("/game/updateShop")
-    public void updateShop(@Payload WSLobbyMessage lobbyMessage, SimpMessageHeaderAccessor headerAccessor,
+    public void updateShop(SimpMessageHeaderAccessor headerAccessor,
                            @Header("simpSessionId") String sessionId) throws LobbyException {
-        headerAccessor.getSessionAttributes().put("lobby", lobbyMessage);
-        headerAccessor.getSessionAttributes().put("sessionId", sessionId);
+        WSLobbyMessage lobbyMessage = (WSLobbyMessage) headerAccessor.getSessionAttributes().get("lobby");
         Game game = GameProvider.INSTANCE.findGame(lobbyMessage.getLobbyId());
         game.updateShop(sessionId);
     }
