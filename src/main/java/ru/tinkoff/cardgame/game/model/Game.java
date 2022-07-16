@@ -12,7 +12,6 @@ import ru.tinkoff.cardgame.game.model.card.CardProvider;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game {
@@ -71,12 +70,12 @@ public class Game {
         players.forEach(p -> {
             CopyOnWriteArrayList<Card> testCards = new CopyOnWriteArrayList<>();
             for (int i = 0; i < 7; i++) {
-                testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLvl()));
+                testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLevel()));
             }
             p.setInvCards(testCards);
             testCards.clear();
             for (int i = 0; i < 7; i++) {
-                testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLvl()));
+                testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLevel()));
             }
             p.setActiveCards(testCards);
         });
