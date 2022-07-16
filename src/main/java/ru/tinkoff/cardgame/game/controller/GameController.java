@@ -44,11 +44,14 @@ public class GameController {
         //game.updateShop(sessionId);
     }
 
-    @MessageMapping("/game/updateShop")
-    public void updateShop(SimpMessageHeaderAccessor headerAccessor, @Header("simpSessionId") String sessionId) {
+    @MessageMapping("/game.updateShop")
+    @SendToUser("/queue/game/updateShop")
+    public Player updateShop(SimpMessageHeaderAccessor headerAccessor, @Header("simpSessionId") String sessionId) {
         WSLobbyMessage lobbyMessage = (WSLobbyMessage) headerAccessor.getSessionAttributes().get("lobby");
         Game game = GameProvider.INSTANCE.findGame(lobbyMessage.getLobbyId());
-        game.findPlayer(sessionId).getShop().updateShop();
+        Player player = game.findPlayer(sessionId);
+        player.getShop().updateShop();
+        return player;
     }
 
     @MessageExceptionHandler(GameException.class)
