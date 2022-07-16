@@ -74,8 +74,6 @@ public class Game {
         //
 
         startTimer();
-        this.players.forEach(p -> notificator.notifyShop(p.getId(), p));
-
     }
 
     public Player findPlayer(String playerId) {
@@ -87,6 +85,7 @@ public class Game {
 
     public void startTimer() {
         logger.info("START TIMER");
+        this.players.forEach(p -> notificator.notifyShop(p.getId(), p));
         new Thread(new Timer(this, 4)).start();
     }
 
