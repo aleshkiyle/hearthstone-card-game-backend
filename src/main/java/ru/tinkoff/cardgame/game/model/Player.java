@@ -1,11 +1,12 @@
 package ru.tinkoff.cardgame.game.model;
 
+import lombok.Data;
 import ru.tinkoff.cardgame.game.model.card.Card;
 
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Player {
+@Data
+public class  Player {
 
     private final String id;
     private int hp;
@@ -13,6 +14,7 @@ public class Player {
     private CopyOnWriteArrayList<Card> activeCards;
     private CopyOnWriteArrayList<Card> invCards;
     private final Shop shop;
+    private int maxGold;
 
     public Player(String id) {
         this.id = id;
@@ -21,61 +23,18 @@ public class Player {
         this.activeCards = new CopyOnWriteArrayList<>();
         this.invCards = new CopyOnWriteArrayList<>();
         this.shop = new Shop();
+        this.maxGold = 3;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public int getHp() {
-        return hp;
-    }
-
-    public int getGold() {
-        return gold;
-    }
-
-    public List<Card> getActiveCards() {
-        return activeCards;
-    }
-
-    public List<Card> getInvCards() {
-        return invCards;
-    }
-
-    public void setActiveCards(CopyOnWriteArrayList<Card> activeCards) {
-        this.activeCards = activeCards;
-    }
-
-    public void setInvCards(CopyOnWriteArrayList<Card> invCards) {
-        this.invCards = invCards;
-    }
-
-    public Shop getShop() {
-        return shop;
-    }
-
-    public void setHp(int hp) {
-        this.hp = hp;
-    }
-
-    public void setGold(int gold) {
-        this.gold = gold;
+    public void increaseGold(int value) {
+        if (gold + value <= maxGold) {
+            this.gold += value;
+        } else {
+            this.gold = this.maxGold;
+        }
     }
 
     public void decreaseGold(int value) {
         this.gold -= value;
-    }
-
-    @Override
-    public String toString() {
-        return "Player{" +
-                "id=" + id +
-                ", hp=" + hp +
-                ", gold=" + gold +
-                ", activeCards=" + activeCards +
-                ", invCards=" + invCards +
-                ", shop=" + shop +
-                '}';
     }
 }
