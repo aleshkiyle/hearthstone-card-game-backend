@@ -1,7 +1,10 @@
 package ru.tinkoff.cardgame.game.model.card;
 
-public class Card implements Cloneable{
-    private int id;
+import lombok.Data;
+
+@Data
+public class Card implements Cloneable {
+
     private String name;
     private int price;
     private String description;
@@ -22,78 +25,6 @@ public class Card implements Cloneable{
         this.cardClass = cardClass;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getDamage() {
-        return damage;
-    }
-
-    public void setDamage(int damage) {
-        this.damage = damage;
-    }
-
-    public int getHp() {
-        return hp;
-    }
-
-    public void setHp(int hp) {
-        this.hp = hp;
-    }
-
-    public Spell getSpell() {
-        return spell;
-    }
-
-    public void setSpell(Spell spell) {
-        this.spell = spell;
-    }
-
-    public int getLvl() {
-        return lvl;
-    }
-
-    public void setLvl(int lvl) {
-        this.lvl = lvl;
-    }
-
-    public CardClass getCardClass() {
-        return cardClass;
-    }
-
-    public void setCardClass(CardClass cardClass) {
-        this.cardClass = cardClass;
-    }
-
     @Override
     public Card clone() {
         try {
@@ -103,20 +34,5 @@ public class Card implements Cloneable{
         } catch (CloneNotSupportedException e) {
             throw new AssertionError();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Card{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", description='" + description + '\'' +
-                ", damage=" + damage +
-                ", hp=" + hp +
-                ", spell=" + spell +
-                ", lvl=" + lvl +
-                ", cardClass=" + cardClass +
-                '}';
     }
 }

@@ -1,11 +1,12 @@
 package ru.tinkoff.cardgame.game.model;
 
-import ru.tinkoff.cardgame.game.model.card.CardProvider;
+import lombok.Data;
 import ru.tinkoff.cardgame.game.model.card.Card;
+import ru.tinkoff.cardgame.game.model.card.CardProvider;
 
-import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Data
 public class Shop {
 
     private static final int START_SHOP_LVL = 1;
@@ -19,22 +20,6 @@ public class Shop {
         this.cardList = new CopyOnWriteArrayList<>();
         this.freezeStatus = false;
         this.lvl = START_SHOP_LVL;
-    }
-
-    public boolean isFreezeStatus() {
-        return freezeStatus;
-    }
-
-    public void setFreezeStatus(boolean freezeStatus) {
-        this.freezeStatus = freezeStatus;
-    }
-
-    public int getLvl() {
-        return lvl;
-    }
-
-    public List<Card> getCardList() {
-        return cardList;
     }
 
     public void upLvl() {
@@ -54,14 +39,5 @@ public class Shop {
 
     public Card buyCard(int index) {
         return this.cardList.remove(index);
-    }
-
-    @Override
-    public String toString() {
-        return "Shop{" +
-                "cardList=" + cardList +
-                ", freezeStatus=" + freezeStatus +
-                ", lvl=" + lvl +
-                '}';
     }
 }
