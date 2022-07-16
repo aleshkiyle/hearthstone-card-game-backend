@@ -13,9 +13,9 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import ru.tinkoff.cardgame.game.exceptions.GameException;
 import ru.tinkoff.cardgame.game.exceptions.IncorrectPlayerActionException;
-import ru.tinkoff.cardgame.game.model.Game;
-import ru.tinkoff.cardgame.game.model.GameProvider;
-import ru.tinkoff.cardgame.game.model.Player;
+import ru.tinkoff.cardgame.game.model.gamelogic.Game;
+import ru.tinkoff.cardgame.game.model.gamelogic.GameProvider;
+import ru.tinkoff.cardgame.game.model.gamelogic.Player;
 import ru.tinkoff.cardgame.lobby.model.WSLobbyMessage;
 
 @Controller
@@ -41,7 +41,6 @@ public class GameController {
         } else {
             throw new IncorrectPlayerActionException();
         }
-        //game.updateShop(sessionId);
     }
 
     @MessageMapping("/game.updateShop")
@@ -60,10 +59,8 @@ public class GameController {
         exception.printStackTrace();
         // TODO: 15.07.2022
         // critical exception in game
-
         //WSLobbyMessage lobbyMessage = (WSLobbyMessage) headerAccessor.getSessionAttributes().get("lobby");
         //GameProvider.INSTANCE.findGame(lobbyMessage.getLobbyId()).stopGame();
-
         return exception.getMessage();
     }
 

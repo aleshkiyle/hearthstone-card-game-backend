@@ -1,4 +1,4 @@
-package ru.tinkoff.cardgame.game.model;
+package ru.tinkoff.cardgame.game.model.gamelogic;
 
 import lombok.Data;
 import ru.tinkoff.cardgame.game.model.card.Card;

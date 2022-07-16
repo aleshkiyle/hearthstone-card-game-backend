@@ -13,9 +13,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import ru.tinkoff.cardgame.game.model.Game;
-import ru.tinkoff.cardgame.game.model.GameProvider;
-import ru.tinkoff.cardgame.game.model.Player;
+import ru.tinkoff.cardgame.game.model.Notificator;
+import ru.tinkoff.cardgame.game.model.gamelogic.Game;
+import ru.tinkoff.cardgame.game.model.gamelogic.GameProvider;
+import ru.tinkoff.cardgame.game.model.gamelogic.Player;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import ru.tinkoff.cardgame.lobby.exceptions.LobbyException;
@@ -29,17 +30,25 @@ import java.util.Optional;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class LobbyController {
 
-    @Autowired
-    private SimpMessagingTemplate simpMessagingTemplate;
+   // @Autowired
+    private final SimpMessagingTemplate simpMessagingTemplate;
+
+    private final Notificator notificator;
 
     private static final Logger logger = LoggerFactory.getLogger(LobbyController.class);
 
+    public LobbyController(SimpMessagingTemplate simpMessagingTemplate) {
+        System.out.println(simpMessagingTemplate);
+        this.simpMessagingTemplate = simpMessagingTemplate;
+        this.notificator = new Notificator(simpMessagingTemplate);
+    }
+
     @GetMapping("/lobby.check")
-    public ResponseEntity<String> checkLobby(@RequestParam("id") String id){
+    public ResponseEntity<String> checkLobby(@RequestParam("id") String id) {
         Optional<Lobby> lobby = LobbiesProvider.INSTANCE.getLobbies().stream()
                 .filter(x -> x.getId().equals(id))
                 .findAny();
-        if(lobby.isPresent()){
+        if (lobby.isPresent()) {
             return ResponseEntity.ok("OK");
         } else {
             return ResponseEntity.notFound().build();
@@ -91,7 +100,7 @@ public class LobbyController {
                 if (lobby.getUsers().size() == lobby.getPlayerCount()) {
                     List<Player> playerList = new ArrayList<>();
                     lobby.getUsers().forEach(u -> playerList.add(new Player(u.getSessionId())));
-                    Game game = new Game(lobby.getId(), playerList, simpMessagingTemplate);
+                    Game game = new Game(lobby.getId(), playerList, notificator);
                     GameProvider.INSTANCE.getGames().add(game);
                     game.startGame();
                     lobby.setStatus(LobbyStatus.STARTED);
@@ -99,7 +108,6 @@ public class LobbyController {
             }
         }
     }
-
 
 
     @MessageMapping("/lobby.start")
