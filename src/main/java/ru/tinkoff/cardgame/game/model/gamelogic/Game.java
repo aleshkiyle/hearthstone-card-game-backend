@@ -101,7 +101,7 @@ public class Game {
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-        //finishRound();
+        finishRound();
     }
 
     public void generateRounds() {

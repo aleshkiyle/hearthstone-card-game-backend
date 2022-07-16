@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import ru.tinkoff.cardgame.game.model.Notificator;
 import ru.tinkoff.cardgame.game.model.WSRoundMessage;
 
+import java.util.concurrent.TimeUnit;
+
 public class Round {
 
     private static final Logger logger = LoggerFactory.getLogger(Round.class);
@@ -24,6 +26,11 @@ public class Round {
         notificator.notifyRound(firstPlayer.getId(), roundMessage);
         roundMessage = new WSRoundMessage(secondPlayer.getActiveCards(), firstPlayer.getActiveCards());
         notificator.notifyRound(secondPlayer.getId(), roundMessage);
+        try {
+            Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Player getFirstPlayer() {
