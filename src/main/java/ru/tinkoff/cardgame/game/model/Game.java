@@ -70,16 +70,16 @@ public class Game {
         // test values for front
         players.forEach(p -> {
             CopyOnWriteArrayList<Card> testCards = new CopyOnWriteArrayList<>();
-            for (int i = 0; i < new Random().nextInt(4); i++) {
+            for (int i = 0; i < 7; i++) {
                 testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLvl()));
             }
             p.setInvCards(testCards);
             testCards.clear();
-            for (int i = 0; i < new Random().nextInt(4); i++) {
+            for (int i = 0; i < 7; i++) {
                 testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLvl()));
             }
             p.setActiveCards(testCards);
-                });
+        });
         //startTimer();
         //simpMessagingTemplate.convertAndSend("/topic/public/start/" + this.id );
 
@@ -99,27 +99,11 @@ public class Game {
 
     }
 
-    // FIXME: 15.07.2022
-    // in game controller
-    @SendTo()
-    public void updateShop(String playerId){
-        Player player = players.stream()
+    public Player findPlayer(String playerId) {
+        return players.stream()
                 .filter(p -> p.getId().equals(playerId))
                 .findFirst()
                 .get();
-        player.getShop().updateShop();
-        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor
-                .create(SimpMessageType.MESSAGE);
-        headerAccessor.setSessionId(player.getId());
-        headerAccessor.setLeaveMutable(true);
-
-        // TODO: 13.07.2022
-        // send to front
-        // FIXME: 13.07.2022
-        // to do listener
-        simpMessagingTemplate.convertAndSendToUser(player.getId(), "/queue/game/updateShop", player,
-                headerAccessor.getMessageHeaders());
-
     }
 
     public void startTimer() {

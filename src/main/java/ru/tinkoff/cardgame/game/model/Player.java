@@ -63,6 +63,10 @@ public class Player {
         this.gold = gold;
     }
 
+    public void decreaseGold(int value) {
+        this.gold -= value;
+    }
+
     @Override
     public String toString() {
         return "Player{" +
