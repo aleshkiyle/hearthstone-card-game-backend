@@ -80,7 +80,7 @@ public class Game {
             }
             p.setActiveCards(testCards);
         });
-        //startTimer();
+        startTimer();
         //simpMessagingTemplate.convertAndSend("/topic/public/start/" + this.id );
 
         this.players.forEach(p -> {
@@ -113,6 +113,20 @@ public class Game {
 
     public void startRound() {
 
+        this.players.forEach(p -> {
+            SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor
+                    .create(SimpMessageType.MESSAGE);
+            headerAccessor.setSessionId(p.getId());
+            headerAccessor.setLeaveMutable(true);
+            // TODO: 13.07.2022
+            // send to front
+            // FIXME: 13.07.2022
+            // to do listener
+            simpMessagingTemplate.convertAndSendToUser(p.getId(), "/queue/game/round/start", p,
+                    headerAccessor.getMessageHeaders());
+        });
+
+
         generateRounds();
         this.rounds.forEach(Round::test);
         logger.info("START ROUND №" + this.roundNumber);
@@ -125,7 +139,7 @@ public class Game {
             throw new RuntimeException(e);
         }
 
-        finishRound();
+        //finishRound();
 
     }
 
