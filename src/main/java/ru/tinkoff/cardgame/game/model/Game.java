@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import ru.tinkoff.cardgame.game.model.card.*;
 
 import java.io.*;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game {
@@ -95,7 +92,7 @@ public class Game {
 
     public void startTimer() {
         logger.info("START TIMER");
-        new Timer(this,4).run();
+        new Timer(this,1).run();
     }
 
     public void startRound() throws IOException, ClassNotFoundException {
@@ -121,50 +118,18 @@ public class Game {
         finishRound();
 
     }
-
+    private static final Comparator<Player> PLAYER_COMPARATOR_BY_HP = new Comparator<Player>() {
+        @Override
+        public int compare(Player o1, Player o2) {
+            return o1.getHp()-o2.getHp();
+        }
+    };
     public void generateRounds() throws IOException, ClassNotFoundException{
         this.rounds.clear();
-
-
-        ByteArrayOutputStream baos1 = new ByteArrayOutputStream();
-        ObjectOutputStream ous1 = new ObjectOutputStream(baos1);
-        ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
-        ObjectOutputStream ous2 = new ObjectOutputStream(baos2);
-        ByteArrayOutputStream baos3 = new ByteArrayOutputStream();
-        ObjectOutputStream ous3 = new ObjectOutputStream(baos3);
-        ByteArrayOutputStream baos4 = new ByteArrayOutputStream();
-        ObjectOutputStream ous4 = new ObjectOutputStream(baos4);
-
-
-        ous1.writeObject(card1);
-        ous1.close();
-        ous2.writeObject(card2);
-        ous2.close();
-        ous3.writeObject(card3);
-        ous3.close();
-        ous4.writeObject(card4);
-        ous4.close();
-
-        ByteArrayInputStream bais1 = new ByteArrayInputStream(baos1.toByteArray());
-        ObjectInputStream ois1 = new ObjectInputStream(bais1);
-        ByteArrayInputStream bais2 = new ByteArrayInputStream(baos2.toByteArray());
-        ObjectInputStream ois2 = new ObjectInputStream(bais2);
-        ByteArrayInputStream bais3 = new ByteArrayInputStream(baos3.toByteArray());
-        ObjectInputStream ois3 = new ObjectInputStream(bais3);
-        ByteArrayInputStream bais4 = new ByteArrayInputStream(baos4.toByteArray());
-        ObjectInputStream ois4 = new ObjectInputStream(bais4);
-
-        players.get(0).setActiveCards((CopyOnWriteArrayList)ois1.readObject());
-        players.get(1).setActiveCards((CopyOnWriteArrayList)ois2.readObject());
-
-        players.get(2).setActiveCards((CopyOnWriteArrayList)ois3.readObject());
-        players.get(3).setActiveCards((CopyOnWriteArrayList)ois4.readObject());
-
-
-
         List<Player> playerList = new CopyOnWriteArrayList<>(this.players);
         //logger.info("orig: " + this.players);
-        Collections.shuffle(playerList);
+        //Collections.shuffle(playerList);
+        Collections.sort(playerList, PLAYER_COMPARATOR_BY_HP);
         logger.info("copy: " + playerList);
         for (int i = 0; i < playerList.size(); i+=2) {
             this.rounds.add(new Round(playerList.get(i), playerList.get(i + 1)));
@@ -192,6 +157,9 @@ public class Game {
     public void finishGame() {
         logger.info("GAME OVER");
         logger.info("WINNER: " + this.players.stream().filter(p -> p.getHp() > 0).findFirst());
+        logger.info("-------------------");
+        logger.info("OTHERS: "+this.players);
+
     }
 
     @Override
