@@ -2,8 +2,10 @@ package ru.tinkoff.cardgame.game.model.card;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Card implements Cloneable {
+public class Card implements Cloneable, Serializable {
 
     private String name;
     private int price;

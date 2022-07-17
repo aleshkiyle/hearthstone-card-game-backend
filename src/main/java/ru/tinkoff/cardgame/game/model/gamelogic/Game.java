@@ -1,44 +1,33 @@
-package ru.tinkoff.cardgame.game.model;
+package ru.tinkoff.cardgame.game.model.gamelogic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageType;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
+import ru.tinkoff.cardgame.game.model.Notificator;
 import ru.tinkoff.cardgame.game.model.card.Card;
 import ru.tinkoff.cardgame.game.model.card.CardProvider;
 
-import java.util.Collections;
-import java.util.LinkedList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Game {
 
-//    public static void main(String[] args) {
-//        CopyOnWriteArrayList<Player> playersList = new CopyOnWriteArrayList<>();
-//        playersList.add(new Player("1"));
-//        playersList.add(new Player("2"));
-//        playersList.add(new Player("3"));
-//        playersList.add(new Player("4"));
-//        new Game("-1", playersList, null).startGame();
-//    }
-
     private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
-    private final SimpMessagingTemplate simpMessagingTemplate;
+    private final Notificator notificator;
 
     private final String id;
     private final List<Player> players;
     private int roundNumber = 0;
     private final CopyOnWriteArrayList<Round> rounds;
 
-    public Game(String id, List<Player> players, SimpMessagingTemplate simpMessagingTemplate) {
+    public Game(String id, List<Player> players, Notificator notificator) {
         this.id = id;
         this.players = players;
         this.rounds = new CopyOnWriteArrayList<>();
-        this.simpMessagingTemplate = simpMessagingTemplate;
+        this.notificator = notificator;
     }
 
     public String getId() {
@@ -79,23 +68,9 @@ public class Game {
             }
             p.setActiveCards(testCards);
         });
-        //startTimer();
-        //simpMessagingTemplate.convertAndSend("/topic/public/start/" + this.id );
+        //
 
-        this.players.forEach(p -> {
-            SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor
-                    .create(SimpMessageType.MESSAGE);
-            headerAccessor.setSessionId(p.getId());
-            headerAccessor.setLeaveMutable(true);
-
-            // TODO: 13.07.2022
-            // send to front
-            // FIXME: 13.07.2022
-            // to do listener
-            simpMessagingTemplate.convertAndSendToUser(p.getId(), "/queue/game/start", p,
-                    headerAccessor.getMessageHeaders());
-        });
-
+        startTimer();
     }
 
     public Player findPlayer(String playerId) {
@@ -107,43 +82,48 @@ public class Game {
 
     public void startTimer() {
         logger.info("START TIMER");
-        new Thread(new Timer(this, 4)).start();
+        this.players.forEach(p -> notificator.notifyShopStart(p.getId(), p));
+        new Thread(new Timer(this, 2)).start();
     }
 
     public void startRound() {
-
         generateRounds();
-        this.rounds.forEach(Round::test);
+        rounds.forEach(r-> new Thread(r).start());
         logger.info("START ROUND №" + this.roundNumber);
         logger.info(this.rounds.toString());
-        // TODO: 09.07.2022
-        // round controller
         try {
-            Thread.sleep(100);
+            Thread.sleep(TimeUnit.SECONDS.toMillis(2));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-
+        // TODO: 17.07.2022
+        // sync
         finishRound();
-
     }
 
+    //    private static final Comparator<Player> PLAYER_COMPARATOR_BY_HP = new Comparator<Player>() {
+//        @Override
+//        public int compare(Player o1, Player o2) {
+//            return o1.getHp()-o2.getHp();
+//        }
+//    };
     public void generateRounds() {
         this.rounds.clear();
-        List<Player> playerList = new LinkedList<>(this.players);
-        Collections.shuffle(playerList);
+        List<Player> playerList = new CopyOnWriteArrayList<>(this.players);
+        //logger.info("orig: " + this.players);
+        //Collections.shuffle(playerList);
+        // Collections.sort(playerList, PLAYER_COMPARATOR_BY_HP);
+        playerList.sort(Comparator.comparingInt(Player::getHp));
+        logger.info("copy: " + playerList);
         for (int i = 0; i < playerList.size(); i += 2) {
-            this.rounds.add(new Round(playerList.get(i), playerList.get(i + 1), this.simpMessagingTemplate));
+            this.rounds.add(new Round(notificator, playerList.get(i), playerList.get(i + 1)));
         }
     }
+
 
     public void finishRound() {
         logger.info("FINISH ROUND №" + this.roundNumber);
         this.roundNumber++;
-        // TODO: 09.07.2022
-        // now for test work
-        this.players.forEach(p -> p.setHp(p.getHp() - 40));
-        this.players.get(0).setHp(100);
         if (isGameEnd()) {
             finishGame();
         } else {
