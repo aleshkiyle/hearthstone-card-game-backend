@@ -20,8 +20,6 @@ import ru.tinkoff.cardgame.lobby.model.WSLobbyMessage;
 @Controller
 public class GameController {
 
-    private static final int MAX_CARD_COUNT = 7;
-
     private static final Logger logger = LoggerFactory.getLogger(GameController.class);
 
     private final PlayerService playerService;
@@ -33,12 +31,18 @@ public class GameController {
     @MessageMapping("/game.buyCard")
     @SendToUser("/queue/game/shop/update")
     public Player buyCard(SimpMessageHeaderAccessor headerAccessor, @Header("simpSessionId") String sessionId,
-                        @Payload int cardIndex) throws IncorrectPlayerActionException {
-
-        WSLobbyMessage lobbyMessage = (WSLobbyMessage) headerAccessor.getSessionAttributes().get("lobby");
-        Game game = GameProvider.INSTANCE.findGame(lobbyMessage.getLobbyId());
-        Player player = game.findPlayer(sessionId);
+                          @Payload int cardIndex) throws IncorrectPlayerActionException {
+        Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.buyCardFromShop(player, cardIndex);
+        return player;
+    }
+
+    @MessageMapping("/game.changeFreezeShop")
+    @SendToUser("/queue/game/shop/update")
+    public Player changeFreezeShop(SimpMessageHeaderAccessor headerAccessor,
+                                   @Header("simpSessionId") String sessionId) {
+        Player player = findPlayer(headerAccessor, sessionId);
+        this.playerService.changeFreezeShop(player);
         return player;
     }
 
@@ -46,12 +50,64 @@ public class GameController {
     @SendToUser("/queue/game/shop/update")
     public Player updateShop(SimpMessageHeaderAccessor headerAccessor,
                              @Header("simpSessionId") String sessionId) throws IncorrectPlayerActionException {
-
-        System.out.println("!!!update shop");
-        WSLobbyMessage lobbyMessage = (WSLobbyMessage) headerAccessor.getSessionAttributes().get("lobby");
-        Game game = GameProvider.INSTANCE.findGame(lobbyMessage.getLobbyId());
-        Player player = game.findPlayer(sessionId);
+        Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.updateShop(player);
+        return player;
+    }
+
+    @MessageMapping("/game.upgradeShop")
+    @SendToUser("/queue/game/shop/update")
+    public Player upgradeShop(SimpMessageHeaderAccessor headerAccessor,
+                              @Header("simpSessionId") String sessionId) throws IncorrectPlayerActionException {
+        Player player = findPlayer(headerAccessor, sessionId);
+        this.playerService.upgradeLevelShop(player);
+        return player;
+    }
+
+    @MessageMapping("/game.putCardToTable")
+    @SendToUser("/queue/game/shop/update")
+    public Player putCardToTable(SimpMessageHeaderAccessor headerAccessor, @Header("simpSessionId") String sessionId,
+                                 @Payload int cardIndex) throws IncorrectPlayerActionException {
+        Player player = findPlayer(headerAccessor, sessionId);
+        this.playerService.putCardToTable(player, cardIndex);
+        return player;
+    }
+
+    @MessageMapping("/game.sellInventoryCard")
+    @SendToUser("/queue/game/shop/update")
+    public Player sellInventoryCard(SimpMessageHeaderAccessor headerAccessor,
+                                    @Header("simpSessionId") String sessionId, @Payload int cardIndex) {
+        Player player = findPlayer(headerAccessor, sessionId);
+        this.playerService.sellInventoryCard(player, cardIndex);
+        return player;
+    }
+
+    @MessageMapping("/game.sellActiveCard")
+    @SendToUser("/queue/game/shop/update")
+    public Player sellActiveCard(SimpMessageHeaderAccessor headerAccessor,
+                                 @Header("simpSessionId") String sessionId, @Payload int cardIndex) {
+        Player player = findPlayer(headerAccessor, sessionId);
+        this.playerService.sellActiveCard(player, cardIndex);
+        return player;
+    }
+
+    @MessageMapping("/game.moveCardLeft")
+    @SendToUser("/queue/game/shop/update")
+    public Player moveCardToLeftOnTable(SimpMessageHeaderAccessor headerAccessor,
+                                        @Header("simpSessionId") String sessionId,
+                                        @Payload int cardIndex) throws IncorrectPlayerActionException {
+        Player player = findPlayer(headerAccessor, sessionId);
+        this.playerService.moveCardToLeftOnTable(player, cardIndex);
+        return player;
+    }
+
+    @MessageMapping("/game.moveCardRight")
+    @SendToUser("/queue/game/shop/update")
+    public Player moveCardToRightOnTable(SimpMessageHeaderAccessor headerAccessor,
+                                         @Header("simpSessionId") String sessionId,
+                                         @Payload int cardIndex) throws IncorrectPlayerActionException {
+        Player player = findPlayer(headerAccessor, sessionId);
+        this.playerService.moveCardToRightOnTable(player, cardIndex);
         return player;
     }
 
@@ -70,5 +126,11 @@ public class GameController {
     @SendToUser("/queue/game/incorrect")
     public String handlePlayerActionException(Throwable exception) {
         return exception.getMessage();
+    }
+
+    private Player findPlayer(SimpMessageHeaderAccessor headerAccessor, String sessionId) {
+        WSLobbyMessage lobbyMessage = (WSLobbyMessage) headerAccessor.getSessionAttributes().get("lobby");
+        Game game = GameProvider.INSTANCE.findGame(lobbyMessage.getLobbyId());
+        return game.findPlayer(sessionId);
     }
 }

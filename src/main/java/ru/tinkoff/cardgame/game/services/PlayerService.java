@@ -48,7 +48,7 @@ public class PlayerService {
     /*
     Upgrade the level of the tavern
      */
-    public void updateLevelShop(Player player) throws IncorrectPlayerActionException {
+    public void upgradeLevelShop(Player player) throws IncorrectPlayerActionException {
         if (player.getGold() >= player.getShop().getUpgradePrice()) {
             player.decreaseGold(player.getShop().getUpgradePrice());
             player.getShop().upgradeLevel();
@@ -79,7 +79,7 @@ public class PlayerService {
     /*
     Sell a card from the field
      */
-    public void sellFieldCard(Player player, int cardIndex) {
+    public void sellActiveCard(Player player, int cardIndex) {
         player.getActiveCards().remove(cardIndex);
         player.increaseGold(SELL_CARD_PRICE);
     }
@@ -87,7 +87,7 @@ public class PlayerService {
     /*
     Move the card to the left on the field
      */
-    public void moveCardToLeftOnFiled(Player player, int cardIndex) throws IncorrectPlayerActionException {
+    public void moveCardToLeftOnTable(Player player, int cardIndex) throws IncorrectPlayerActionException {
         if (cardIndex > 0) {
             Collections.swap(player.getActiveCards(), cardIndex, cardIndex - 1);
         } else {
@@ -98,7 +98,7 @@ public class PlayerService {
     /*
    Move the card to the right on the field
     */
-    public void moveCardToRightOnFiled(Player player, int cardIndex) throws IncorrectPlayerActionException {
+    public void moveCardToRightOnTable(Player player, int cardIndex) throws IncorrectPlayerActionException {
         if (cardIndex < MAX_CARD_COUNT - 1) {
             Collections.swap(player.getActiveCards(), cardIndex, cardIndex + 1);
         } else {
