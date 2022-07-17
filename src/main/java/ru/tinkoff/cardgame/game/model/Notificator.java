@@ -13,21 +13,33 @@ public class Notificator {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    public void notifyShop(String playerSessionId, Player player) {
-        SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor
-                .create(SimpMessageType.MESSAGE);
-        headerAccessor.setSessionId(playerSessionId);
-        headerAccessor.setLeaveMutable(true);
-        simpMessagingTemplate.convertAndSendToUser(playerSessionId, "/queue/game/shop", player,
-                headerAccessor.getMessageHeaders());
+    public void notifyGameStart(String playerSessionId, Player player) {
+        notifyFront(playerSessionId, "/queue/game/start", player);
     }
 
-    public void notifyRound(String playerSessionId, WSRoundMessage roundMessage) {
+    public void notifyShopStart(String playerSessionId, Player player) {
+        notifyFront(playerSessionId, "/queue/game/shop/start", player);
+    }
+
+    public void notifyShopUpdate(String playerSessionId, WSRoundMessage roundMessage) {
+        notifyFront(playerSessionId, "/queue/game/shop/update",roundMessage);
+    }
+
+    public void notifyRoundStart(String playerSessionId, WSRoundMessage roundMessage) {
+        notifyFront(playerSessionId, "/queue/game/round/start",roundMessage);
+    }
+
+
+    public void notifyRoundUpdate(String playerSessionId, WSRoundMessage roundMessage) {
+        notifyFront(playerSessionId, "/queue/game/round/update",roundMessage);
+    }
+
+    private void notifyFront(String playerSessionId, String path, Object payload) {
         SimpMessageHeaderAccessor headerAccessor = SimpMessageHeaderAccessor
                 .create(SimpMessageType.MESSAGE);
         headerAccessor.setSessionId(playerSessionId);
         headerAccessor.setLeaveMutable(true);
-        simpMessagingTemplate.convertAndSendToUser(playerSessionId, "/queue/game/round", roundMessage,
+        simpMessagingTemplate.convertAndSendToUser(playerSessionId, path, payload,
                 headerAccessor.getMessageHeaders());
     }
 

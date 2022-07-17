@@ -7,8 +7,6 @@ import ru.tinkoff.cardgame.game.model.Notificator;
 import ru.tinkoff.cardgame.game.model.card.Card;
 import ru.tinkoff.cardgame.game.model.card.CardProvider;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -84,7 +82,7 @@ public class Game {
 
     public void startTimer() {
         logger.info("START TIMER");
-        this.players.forEach(p -> notificator.notifyShop(p.getId(), p));
+        this.players.forEach(p -> notificator.notifyShopStart(p.getId(), p));
         new Thread(new Timer(this, 2)).start();
     }
 

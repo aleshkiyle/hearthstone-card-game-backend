@@ -39,9 +39,9 @@ public class Round implements Runnable{
         players.add(secondPlayer);
 
         WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer.getActiveCards(), secondPlayer.getActiveCards());
-        notificator.notifyRound(firstPlayer.getId(), roundMessage);
+        notificator.notifyRoundStart(firstPlayer.getId(), roundMessage);
         roundMessage = new WSRoundMessage(secondPlayer.getActiveCards(), firstPlayer.getActiveCards());
-        notificator.notifyRound(secondPlayer.getId(), roundMessage);
+        notificator.notifyRoundStart(secondPlayer.getId(), roundMessage);
 
         Collections.shuffle(players);
         attack(players);
