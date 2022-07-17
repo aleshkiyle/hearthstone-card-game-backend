@@ -19,7 +19,7 @@ public class  Player {
     public Player(String id) {
         this.id = id;
         this.hp = 10;
-        this.gold = 0;
+        this.gold = 100;
         this.activeCards = new CopyOnWriteArrayList<>();
         this.invCards = new CopyOnWriteArrayList<>();
         this.shop = new Shop();
