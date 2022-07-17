@@ -14,7 +14,7 @@ public class PlayerService {
     private static final int MAX_CARD_COUNT = 7;
 
     /*
-    Купить карточку из магазина
+    Buy a card from the store
      */
     public void buyCardFromShop(Player player, int cardIndex) throws IncorrectPlayerActionException {
         int price = player.getShop().getCardList().get(cardIndex).getPrice();
@@ -27,14 +27,14 @@ public class PlayerService {
     }
 
     /*
-    Заморозить/разморозить магазин
+    Freeze/Unfreeze Store
      */
     public void changeFreezeShop(Player player) {
         player.getShop().setFreezeStatus(!player.getShop().isFreezeStatus());
     }
 
     /*
-    Обновить магазин
+    Update store
      */
     public void updateShop(Player player) throws IncorrectPlayerActionException {
         if (player.getGold() >= SHOP_UPDATE_PRICE) {
@@ -46,7 +46,7 @@ public class PlayerService {
     }
 
     /*
-    Улучшить уровень таверны
+    Upgrade the level of the tavern
      */
     public void updateLevelShop(Player player) throws IncorrectPlayerActionException {
         if (player.getGold() >= player.getShop().getUpgradePrice()) {
@@ -58,7 +58,7 @@ public class PlayerService {
     }
 
     /*
-    Положить карточку на стол из инвентаря
+    Put the card on the table from inventory
      */
     public void putCardToTable(Player player, int cardIndex) throws IncorrectPlayerActionException {
         if (player.getActiveCards().size() < MAX_CARD_COUNT) {
@@ -69,7 +69,7 @@ public class PlayerService {
     }
 
     /*
-    Продать карточку из инвентаря
+    Sell card from inventory
      */
     public void sellInventoryCard(Player player, int cardIndex) {
         player.getInvCards().remove(cardIndex);
@@ -77,7 +77,7 @@ public class PlayerService {
     }
 
     /*
-    Продать карточку с поля
+    Sell a card from the field
      */
     public void sellFieldCard(Player player, int cardIndex) {
         player.getActiveCards().remove(cardIndex);
@@ -85,14 +85,14 @@ public class PlayerService {
     }
 
     /*
-    Переместить карточку влево на поле
+    Move the card to the left on the field
      */
     public void moveCardToLeftOnFiled(Player player, int cardIndex) {
         Collections.swap(player.getActiveCards(), cardIndex, cardIndex - 1);
     }
 
     /*
-   Переместить карточку вправо на поле
+   Move the card to the right on the field
     */
     public void moveCardToRightOnFiled(Player player, int cardIndex) {
         Collections.swap(player.getActiveCards(), cardIndex, cardIndex + 1);
