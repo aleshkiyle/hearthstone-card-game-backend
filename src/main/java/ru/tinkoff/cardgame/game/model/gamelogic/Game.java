@@ -56,19 +56,19 @@ public class Game {
         players.forEach(p -> p.getShop().updateShop());
 
         // test values for front
-        players.forEach(p -> {
-            CopyOnWriteArrayList<Card> testCards = new CopyOnWriteArrayList<>();
-            for (int i = 0; i < 7; i++) {
-                testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLevel()));
-            }
-            p.setInvCards(testCards);
-            testCards.clear();
-            for (int i = 0; i < 7; i++) {
-                testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLevel()));
-            }
-            p.setActiveCards(testCards);
-        });
-        //
+//        players.forEach(p -> {
+//            CopyOnWriteArrayList<Card> testCards = new CopyOnWriteArrayList<>();
+//            for (int i = 0; i < 7; i++) {
+//                testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLevel()));
+//            }
+//            p.setInvCards(testCards);
+//            testCards.clear();
+//            for (int i = 0; i < 7; i++) {
+//                testCards.add(CardProvider.INSTANCE.getRandomLvlCard(p.getShop().getLevel()));
+//            }
+//            p.setActiveCards(testCards);
+//        });
+//        //
 
         startTimer();
     }
