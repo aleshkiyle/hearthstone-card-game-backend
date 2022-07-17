@@ -50,13 +50,13 @@ public class LobbyService {
         return lobby;
     }
 
-    public void joinLobby(final Lobby lobby, String userName, String sessionId, Logger logger,
+    public void joinLobby(final Lobby lobby, String userName, String sessionId,
                           SimpMessagingTemplate simpMessagingTemplate, Notificator notificator) throws LobbyException {
         synchronized (lobby) {
             if (lobby.getUsers().size() < lobby.getPlayerCount() && lobby.getStatus() == LobbyStatus.CREATED) {
 
                 lobby.addUser(new User(userName, sessionId));
-                logger.info("JOIN lobby" + lobby);
+
                 simpMessagingTemplate.convertAndSend("/topic/public/" + lobby.getId(), lobby);
 
                 if (lobby.getUsers().size() == lobby.getPlayerCount()) {

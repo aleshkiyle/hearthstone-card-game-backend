@@ -67,8 +67,8 @@ public class LobbyController {
         headerAccessor.getSessionAttributes().put("sessionId", sessionId);
         Optional<Lobby> lobby = LobbiesProvider.INSTANCE.findLobby(lobbyMessage.getLobbyId());
         if (lobby.isPresent()) {
-            this.lobbyService.joinLobby(lobby.get(), lobbyMessage.getUsername(), sessionId,
-                    (java.util.logging.Logger) logger, simpMessagingTemplate, notificator);
+            this.lobbyService.joinLobby(lobby.get(), lobbyMessage.getUsername(), sessionId, simpMessagingTemplate, notificator);
+            logger.info("JOIN lobby" + lobby);
         } else {
             throw new LobbyException();
         }
