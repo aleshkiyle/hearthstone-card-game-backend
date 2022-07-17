@@ -83,7 +83,7 @@ public class Game {
     public void startTimer() {
         logger.info("START TIMER");
         this.players.forEach(p -> notificator.notifyShopStart(p.getId(), p));
-        new Thread(new Timer(this, 2)).start();
+        new Thread(new Timer(this, 15)).start();
     }
 
     public void startRound() {
@@ -92,7 +92,7 @@ public class Game {
         logger.info("START ROUND №" + this.roundNumber);
         logger.info(this.rounds.toString());
         try {
-            Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+            Thread.sleep(TimeUnit.SECONDS.toMillis(5));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
