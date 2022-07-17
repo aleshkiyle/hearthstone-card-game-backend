@@ -87,15 +87,23 @@ public class PlayerService {
     /*
     Move the card to the left on the field
      */
-    public void moveCardToLeftOnFiled(Player player, int cardIndex) {
-        Collections.swap(player.getActiveCards(), cardIndex, cardIndex - 1);
+    public void moveCardToLeftOnFiled(Player player, int cardIndex) throws IncorrectPlayerActionException {
+        if (cardIndex > 0) {
+            Collections.swap(player.getActiveCards(), cardIndex, cardIndex - 1);
+        } else {
+            throw new IncorrectPlayerActionException();
+        }
     }
 
     /*
    Move the card to the right on the field
     */
-    public void moveCardToRightOnFiled(Player player, int cardIndex) {
-        Collections.swap(player.getActiveCards(), cardIndex, cardIndex + 1);
+    public void moveCardToRightOnFiled(Player player, int cardIndex) throws IncorrectPlayerActionException {
+        if (cardIndex < MAX_CARD_COUNT - 1) {
+            Collections.swap(player.getActiveCards(), cardIndex, cardIndex + 1);
+        } else {
+            throw new IncorrectPlayerActionException();
+        }
     }
 
 }
