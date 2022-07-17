@@ -1,5 +1,6 @@
 package ru.tinkoff.cardgame.game.model.gamelogic;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public class Timer implements Runnable {

@@ -3,17 +3,16 @@ package ru.tinkoff.cardgame.game.model.gamelogic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessageType;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import ru.tinkoff.cardgame.game.model.Notificator;
 import ru.tinkoff.cardgame.game.model.card.Card;
 import ru.tinkoff.cardgame.game.model.card.CardProvider;
 
+import java.io.IOException;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class Game {
 
@@ -86,41 +85,47 @@ public class Game {
     public void startTimer() {
         logger.info("START TIMER");
         this.players.forEach(p -> notificator.notifyShop(p.getId(), p));
-        new Thread(new Timer(this, 4)).start();
+        new Thread(new Timer(this, 2)).start();
     }
 
     public void startRound() {
         generateRounds();
-        this.rounds.forEach(Round::test);
+        rounds.forEach(r-> new Thread(r).start());
         logger.info("START ROUND №" + this.roundNumber);
         logger.info(this.rounds.toString());
-        // TODO: 09.07.2022
-        // round controller
         try {
-            Thread.sleep(100);
+            Thread.sleep(TimeUnit.SECONDS.toMillis(2));
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
+        // TODO: 17.07.2022
+        // sync
         finishRound();
     }
 
+    //    private static final Comparator<Player> PLAYER_COMPARATOR_BY_HP = new Comparator<Player>() {
+//        @Override
+//        public int compare(Player o1, Player o2) {
+//            return o1.getHp()-o2.getHp();
+//        }
+//    };
     public void generateRounds() {
-        // TODO: 16.07.2022
         this.rounds.clear();
-        List<Player> playerList = new LinkedList<>(this.players);
-        Collections.shuffle(playerList);
+        List<Player> playerList = new CopyOnWriteArrayList<>(this.players);
+        //logger.info("orig: " + this.players);
+        //Collections.shuffle(playerList);
+        // Collections.sort(playerList, PLAYER_COMPARATOR_BY_HP);
+        playerList.sort(Comparator.comparingInt(Player::getHp));
+        logger.info("copy: " + playerList);
         for (int i = 0; i < playerList.size(); i += 2) {
-            this.rounds.add(new Round(playerList.get(i), playerList.get(i + 1), notificator));
+            this.rounds.add(new Round(notificator, playerList.get(i), playerList.get(i + 1)));
         }
     }
+
 
     public void finishRound() {
         logger.info("FINISH ROUND №" + this.roundNumber);
         this.roundNumber++;
-        // TODO: 09.07.2022
-        // now for test work
-        this.players.forEach(p -> p.setHp(p.getHp() - 40));
-        this.players.get(0).setHp(100);
         if (isGameEnd()) {
             finishGame();
         } else {
