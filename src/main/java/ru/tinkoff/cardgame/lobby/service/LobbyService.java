@@ -23,7 +23,7 @@ public class LobbyService {
 
     public ResponseEntity<String> checkLobby(String id) {
         Optional<Lobby> lobby = LobbiesProvider.INSTANCE.getLobbies().stream()
-                .filter(x -> x.getId().equals(id))
+                .filter(x -> x.getId().equals(id) && x.getStatus() == LobbyStatus.CREATED)
                 .findAny();
         return lobby.isPresent() ? ResponseEntity.ok("OK") : ResponseEntity.notFound().build();
     }

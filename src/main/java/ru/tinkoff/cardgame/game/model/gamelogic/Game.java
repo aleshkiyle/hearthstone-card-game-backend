@@ -70,7 +70,7 @@ public class Game {
 //        });
 //        //
 
-        startTimer();
+        //startTimer();
     }
 
     public Player findPlayer(String playerId) {
