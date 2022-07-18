@@ -24,6 +24,8 @@ public class Round implements Runnable {
     private int attackIndex = 0;
     private int defenceIndex = 0;
 
+    private boolean isFirstPlayerFirstAttack;
+
     public Round(Notificator notificator, Player firstPlayer, Player secondPlayer) {
         this.notificator = notificator;
         this.firstPlayer = firstPlayer;
@@ -33,8 +35,9 @@ public class Round implements Runnable {
     @Override
     public void run() {
         try {
+            notifyFront();
             startRound();
-            Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+            Thread.sleep(TimeUnit.SECONDS.toMillis(5));
         } catch (IOException | ClassNotFoundException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -45,6 +48,7 @@ public class Round implements Runnable {
         players.add(firstPlayer);
         players.add(secondPlayer);
         Collections.shuffle(players);
+        this.isFirstPlayerFirstAttack = players.get(0).equals(firstPlayer);
         attack(players);
     }
 
@@ -53,6 +57,14 @@ public class Round implements Runnable {
         notificator.notifyRoundStart(firstPlayer.getId(), roundMessage);
         roundMessage = new WSRoundMessage(secondPlayer.getActiveCards(), firstPlayer.getActiveCards());
         notificator.notifyRoundStart(secondPlayer.getId(), roundMessage);
+    }
+
+    private void notifyUpdateFront(List<Card> firstPlayerCard, List<Card> secondPlayerCard, int attackIndex, int defenceIndex, boolean isAttackMove) {
+        boolean isFirstPlayerAttack = isAttackMove == this.isFirstPlayerFirstAttack;
+        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayerCard, secondPlayerCard, attackIndex, defenceIndex, isFirstPlayerAttack);
+        notificator.notifyRoundUpdate(firstPlayer.getId(), roundMessage);
+        roundMessage = new WSRoundMessage(secondPlayerCard, firstPlayerCard, attackIndex, defenceIndex, !isFirstPlayerAttack);
+        notificator.notifyRoundUpdate(secondPlayer.getId(), roundMessage);
     }
 
 
@@ -76,6 +88,7 @@ public class Round implements Runnable {
             attackIndexLocal = 0;
         }
         int index = getRandom(cardsOfDefence.size() - 1); //индекс атакуемой карты
+        //notifyUpdateFront()
         Card attackCard = cardsOfAttack.get(attackIndexLocal);  //карта наносящая урон
         Card attackedCard = cardsOfDefence.get(index); // карта получающая урон
 
