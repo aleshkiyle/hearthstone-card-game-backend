@@ -16,10 +16,11 @@ import ru.tinkoff.cardgame.lobby.model.User;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 @Service
 public class LobbyService {
+
+    private static final int MAX_PLAYERS = 4;
 
     public ResponseEntity<String> checkLobby(String id) {
         Optional<Lobby> lobby = LobbiesProvider.INSTANCE.getLobbies().stream()
@@ -42,7 +43,7 @@ public class LobbyService {
                 lobbyId = String.valueOf(Integer.parseInt(LobbiesProvider.INSTANCE.getLobbies()
                         .get(LobbiesProvider.INSTANCE.getLobbies().size() - 1).getId()) + 1);
             }
-            lobby = new Lobby(lobbyId, 2);
+            lobby = new Lobby(lobbyId, MAX_PLAYERS);
             LobbiesProvider.INSTANCE.getLobbies().add(lobby);
         }
 
@@ -66,13 +67,13 @@ public class LobbyService {
         }
     }
 
-    private void createGame(Lobby lobby, Notificator notificator) {
+    private void createGame(Lobby lobby, Notificator notificator) throws LobbyException {
         List<Player> playerList = new ArrayList<>();
         lobby.getUsers().forEach(u -> playerList.add(new Player(u.getSessionId())));
         Game game = new Game(lobby.getId(), playerList, notificator);
         GameProvider.INSTANCE.getGames().add(game);
         game.startGame();
         game.getPlayers().forEach(p -> notificator.notifyGameStart(p.getId(), p));
-        lobby.setStatus(LobbyStatus.STARTED);
+        lobby.start();
     }
 }

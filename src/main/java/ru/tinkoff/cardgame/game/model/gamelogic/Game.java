@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import ru.tinkoff.cardgame.game.model.Notificator;
 
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -20,12 +21,12 @@ public class Game {
     private final String id;
     private final List<Player> players;
     private int roundNumber = 0;
-    private final CopyOnWriteArrayList<Thread> rounds;
+    private final List<Thread> rounds;
 
     public Game(String id, List<Player> players, Notificator notificator) {
         this.id = id;
         this.players = players;
-        this.rounds = new CopyOnWriteArrayList<>();
+        this.rounds = new LinkedList<>();
         this.notificator = notificator;
     }
 
@@ -104,6 +105,11 @@ public class Game {
         players.forEach(p -> {
             if (p.getMaxGold() < MAX_PLAYER_GOLD) {
                 p.setMaxGold(p.getMaxGold() + 1);
+            }
+        });
+        players.forEach(p-> {
+            if (p.getShop().isFreezeStatus()) {
+                p.getShop().setFreezeStatus(false);
             }
         });
         players.forEach(p -> p.setGold(p.getMaxGold()));
