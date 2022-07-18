@@ -85,4 +85,19 @@ public class Card {
     public void setCardClass(CardClass cardClass) {
         this.cardClass = cardClass;
     }
+
+    @Override
+    public String toString() {
+        return "Card{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", damage=" + damage +
+                ", hp=" + hp +
+                ", spell=" + spell +
+                ", lvl=" + lvl +
+                ", cardClass=" + cardClass +
+                '}';
+    }
 }
