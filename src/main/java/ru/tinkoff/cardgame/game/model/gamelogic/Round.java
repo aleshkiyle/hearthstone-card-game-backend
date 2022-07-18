@@ -12,8 +12,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.TimeUnit;
 
-public class Round implements Runnable{
+public class Round implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(Round.class);
 
@@ -29,22 +30,29 @@ public class Round implements Runnable{
         this.secondPlayer = secondPlayer;
     }
 
+    @Override
+    public void run() {
+        try {
+            startRound();
+            Thread.sleep(TimeUnit.SECONDS.toMillis(2));
+        } catch (IOException | ClassNotFoundException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    //
-    //  11.07
-    //
     public void startRound() throws IOException, ClassNotFoundException {
         List<Player> players = new ArrayList<>();
         players.add(firstPlayer);
         players.add(secondPlayer);
+        Collections.shuffle(players);
+        attack(players);
+    }
 
+    private void notifyFront() {
         WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer.getActiveCards(), secondPlayer.getActiveCards());
         notificator.notifyRoundStart(firstPlayer.getId(), roundMessage);
         roundMessage = new WSRoundMessage(secondPlayer.getActiveCards(), firstPlayer.getActiveCards());
         notificator.notifyRoundStart(secondPlayer.getId(), roundMessage);
-
-        Collections.shuffle(players);
-        attack(players);
     }
 
 
@@ -53,18 +61,13 @@ public class Round implements Runnable{
         return (int) ((Math.random() * ((max - min) + 1)) + min);
     }
 
-    private List<Card> serialize(List<Card> cards) throws IOException, ClassNotFoundException {
+    private List<Card> cloneCards(List<Card> cards) throws IOException, ClassNotFoundException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ObjectOutputStream ous = new ObjectOutputStream(baos);
-
-
         ous.writeObject(cards);
         ous.close();
-
-
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         ObjectInputStream ois = new ObjectInputStream(bais);
-
         return new CopyOnWriteArrayList<>((List<Card>) ois.readObject());
     }
 
@@ -132,24 +135,19 @@ public class Round implements Runnable{
     }
 
     private void attack(List<Player> players) throws IOException, ClassNotFoundException {
-
-        List<Card> cardsOfAttack = serialize(players.get(0).getActiveCards());
-        List<Card> cardsOfDefence = serialize(players.get(1).getActiveCards());
-
+        List<Card> cardsOfAttack = cloneCards(players.get(0).getActiveCards());
+        List<Card> cardsOfDefence = cloneCards(players.get(1).getActiveCards());
 
         if (cardsOfAttack.size() == 0 && cardsOfDefence.size() != 0) {
             //Карты только у защиты(Атака защиты(1) по герою Атаки(0))
             attackHero(cardsOfDefence, players.get(1), players.get(0));
-
         } else if (cardsOfDefence.size() == 0 && cardsOfAttack.size() != 0) {
             //Карты только у атаки (Герой атаки(0) атакует героя защиты(1))
             attackHero(cardsOfAttack, players.get(0), players.get(1));
         } else {
             //TODO: У двоих есть карты
             while (cardsOfAttack.size() > 0 && cardsOfDefence.size() > 0) {
-
                 List<List<Card>> cards;
-
                 //Атака атаки
                 cards = doMove(cardsOfAttack, attackIndex, cardsOfDefence, defenceIndex, true);
                 cardsOfAttack = cards.get(0);
@@ -161,14 +159,10 @@ public class Round implements Runnable{
                     cardsOfAttack = cards.get(1);
                     cardsOfDefence = cards.get(0);
                 }
-
                 if (cardsOfDefence.size() == 0 && cardsOfAttack.size() != 0) {
-
                     attackHero(cardsOfAttack, players.get(0), players.get(1));
-
                     //TODO: End round
                     break;
-
                 } else if (cardsOfAttack.size() == 0 && cardsOfDefence.size() != 0) {
 
                     attackHero(cardsOfDefence, players.get(1), players.get(0));
@@ -176,13 +170,11 @@ public class Round implements Runnable{
                     //TODO: End round
                     break;
                 }
-
                 if (cardsOfAttack.size() == 0 && cardsOfDefence.size() == 0) {
                     //TODO: Ничья
-                    logger.info("Ничья");
+                    //logger.info("Ничья");
                     break;
                 }
-
                 if (attackIndex >= cardsOfAttack.size()) {
                     attackIndex = 0;
                 }
@@ -190,18 +182,10 @@ public class Round implements Runnable{
                     defenceIndex = 0;
                 }
                 //последняя карта(сброс цикла)
-
                 //TODO: вернуть на фронт конец раунда
-
             }
         }
     }
-
-
-    //
-    //  11.07
-    //
-
 
     @Override
     public String toString() {
@@ -211,12 +195,4 @@ public class Round implements Runnable{
                 '}';
     }
 
-    @Override
-    public void run() {
-        try {
-            startRound();
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

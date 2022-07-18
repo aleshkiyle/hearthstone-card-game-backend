@@ -10,7 +10,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Shop {
 
     private static final int SHOP_CARD_NUMBER = 3;
-    private static final int MAX_SHOP_LEVEL = 5;
+    public static final int MAX_SHOP_LEVEL = 5;
     private static final int BASE_VALUE_UPGRADE_PRICE = 5;
 
     private final CopyOnWriteArrayList<Card> cardList;
@@ -31,11 +31,9 @@ public class Shop {
     }
 
     public void updateShop() {
-        if (!isFreezeStatus()) {
-            this.cardList.clear();
-            for (int i = 0; i < SHOP_CARD_NUMBER; i++) {
-                this.cardList.add(CardProvider.INSTANCE.getRandomLvlCard(this.level));
-            }
+        this.cardList.clear();
+        for (int i = 0; i < SHOP_CARD_NUMBER; i++) {
+            this.cardList.add(CardProvider.INSTANCE.getRandomLvlCard(this.level));
         }
     }
 

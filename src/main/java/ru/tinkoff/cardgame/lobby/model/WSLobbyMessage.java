@@ -1,8 +1,8 @@
 package ru.tinkoff.cardgame.lobby.model;
 
-/*
- * POJO (TO)
- */
+import lombok.Data;
+
+@Data
 public class WSLobbyMessage {
     private String username;
     private String lobbyId;
@@ -13,27 +13,4 @@ public class WSLobbyMessage {
         this.lobbyId = lobbyId;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getLobbyId() {
-        return lobbyId;
-    }
-
-    public void setLobbyId(String lobbyId) {
-        this.lobbyId = lobbyId;
-    }
-
-    @Override
-    public String toString() {
-        return "WSLobbyMessage{" +
-                "username='" + username + '\'' +
-                ", lobbyId='" + lobbyId + '\'' +
-                '}';
-    }
 }

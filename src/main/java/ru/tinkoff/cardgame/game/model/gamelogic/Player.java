@@ -6,20 +6,20 @@ import ru.tinkoff.cardgame.game.model.card.Card;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Data
-public class  Player {
+public class Player {
 
     private final String id;
     private int hp;
     private int gold;
-    private  CopyOnWriteArrayList<Card> activeCards;
-    private  CopyOnWriteArrayList<Card> invCards;
+    private final CopyOnWriteArrayList<Card> activeCards;
+    private final CopyOnWriteArrayList<Card> invCards;
     private final Shop shop;
     private int maxGold;
 
     public Player(String id) {
         this.id = id;
-        this.hp = 10;
-        this.gold = 100;
+        this.hp = 100;
+        this.gold = 3;
         this.activeCards = new CopyOnWriteArrayList<>();
         this.invCards = new CopyOnWriteArrayList<>();
         this.shop = new Shop();

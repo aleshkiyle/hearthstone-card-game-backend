@@ -9,8 +9,10 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import ru.tinkoff.cardgame.game.model.gamelogic.GameProvider;
 import ru.tinkoff.cardgame.lobby.model.LobbiesProvider;
 import ru.tinkoff.cardgame.lobby.model.Lobby;
+import ru.tinkoff.cardgame.lobby.model.LobbyStatus;
 import ru.tinkoff.cardgame.lobby.model.WSLobbyMessage;
 
 import java.util.Optional;
@@ -46,6 +48,10 @@ public class WebSocketEventListener {
             if (lobby.get().getUsers().size() == 0) {
                 LobbiesProvider.INSTANCE.getLobbies().remove(lobby.get());
                 logger.info("REMOVE lobby " + lobby);
+                if (lobby.get().getStatus() != LobbyStatus.CREATED) {
+                    GameProvider.INSTANCE.getGames().removeIf(g->g.getId().equals(lobby.get().getId()));
+                    logger.info("REMOVE GAME " + lobby.get().getId());
+                }
             }
             messagingTemplate.convertAndSend("/topic/public/" + lobby.get().getId(), lobby);
         }

@@ -3,6 +3,7 @@ package ru.tinkoff.cardgame.game.services;
 import org.springframework.stereotype.Service;
 import ru.tinkoff.cardgame.game.exceptions.IncorrectPlayerActionException;
 import ru.tinkoff.cardgame.game.model.gamelogic.Player;
+import ru.tinkoff.cardgame.game.model.gamelogic.Shop;
 
 import java.util.Collections;
 
@@ -49,7 +50,7 @@ public class PlayerService {
     Upgrade the level of the tavern
      */
     public void upgradeLevelShop(Player player) throws IncorrectPlayerActionException {
-        if (player.getGold() >= player.getShop().getUpgradePrice()) {
+        if (player.getGold() >= player.getShop().getUpgradePrice() && player.getShop().getLevel() < Shop.MAX_SHOP_LEVEL) {
             player.decreaseGold(player.getShop().getUpgradePrice());
             player.getShop().upgradeLevel();
         } else {
