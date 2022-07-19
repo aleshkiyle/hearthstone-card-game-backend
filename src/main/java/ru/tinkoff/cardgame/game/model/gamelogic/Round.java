@@ -98,9 +98,9 @@ public class Round implements Runnable {
         int damageD = attackedCard.getDamage();
 
         if (this.isFirstPlayerFirstAttack) {
-            notifyUpdateFront(cardsOfAttack, cardsOfDefence, attackIndex, defenceIndex, a1);
+            notifyUpdateFront(cardsOfAttack, cardsOfDefence, attackIndex, defenceIndex, !a1);
         } else {
-            notifyUpdateFront(cardsOfDefence, cardsOfAttack, attackIndex, defenceIndex, a1);
+            notifyUpdateFront(cardsOfDefence, cardsOfAttack, attackIndex, defenceIndex, !a1);
         }
         Thread.sleep(TimeUnit.SECONDS.toMillis(3));
 
