@@ -43,7 +43,7 @@ public class Round implements Runnable {
         }
     }
 
-    public void startRound() throws IOException, ClassNotFoundException {
+    public void startRound() throws IOException, ClassNotFoundException, InterruptedException {
         List<Player> players = new ArrayList<>();
         players.add(firstPlayer);
         players.add(secondPlayer);
@@ -83,7 +83,7 @@ public class Round implements Runnable {
         return new CopyOnWriteArrayList<>((List<Card>) ois.readObject());
     }
 
-    private List<List<Card>> doMove(List<Card> cardsOfAttack, int attackIndexLocal, List<Card> cardsOfDefence, int defenceIndexLocal, boolean a1) {
+    private List<List<Card>> doMove(List<Card> cardsOfAttack, int attackIndexLocal, List<Card> cardsOfDefence, int defenceIndexLocal, boolean a1) throws InterruptedException {
         if (attackIndexLocal >= cardsOfAttack.size()) {
             attackIndexLocal = 0;
         }
@@ -96,6 +96,13 @@ public class Round implements Runnable {
         int damage = attackCard.getDamage();
         int hpA = attackCard.getHp();
         int damageD = attackedCard.getDamage();
+
+        if (this.isFirstPlayerFirstAttack) {
+            notifyUpdateFront(cardsOfAttack, cardsOfDefence, attackIndex, defenceIndex, a1);
+        } else {
+            notifyUpdateFront(cardsOfDefence, cardsOfAttack, attackIndex, defenceIndex, a1);
+        }
+        Thread.sleep(TimeUnit.SECONDS.toMillis(3));
 
         if (hp <= damage) { //если хп карты(например 1) <= чем урон ( например 2), то удаляем карту
             //TODO: Отправка на фронт события "уничтожение атакованной карты"
@@ -119,6 +126,12 @@ public class Round implements Runnable {
             attackCard.setHp(hpA - damageD);
             cardsOfAttack.set(attackIndexLocal, attackCard);
         }
+        if (this.isFirstPlayerFirstAttack) {
+            notifyUpdateFront(cardsOfAttack, cardsOfDefence, attackIndex, defenceIndex, a1);
+        } else {
+            notifyUpdateFront(cardsOfDefence, cardsOfAttack, attackIndex, defenceIndex, a1);
+        }
+        Thread.sleep(TimeUnit.SECONDS.toMillis(3));
 
         attackIndexLocal++;
         if (a1) {
@@ -147,7 +160,7 @@ public class Round implements Runnable {
         }
     }
 
-    private void attack(List<Player> players) throws IOException, ClassNotFoundException {
+    private void attack(List<Player> players) throws IOException, ClassNotFoundException, InterruptedException {
         List<Card> cardsOfAttack = cloneCards(players.get(0).getActiveCards());
         List<Card> cardsOfDefence = cloneCards(players.get(1).getActiveCards());
 
