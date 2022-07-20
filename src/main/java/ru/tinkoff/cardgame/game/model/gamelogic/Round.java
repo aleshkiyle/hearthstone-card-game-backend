@@ -24,6 +24,9 @@ public class Round implements Runnable {
     private int attackIndex = 0;
     private int defenceIndex = 0;
 
+    private List<Card> cardsOfAttack;
+    private List<Card> cardsOfDefence;
+
     private boolean isFirstPlayerFirstAttack;
 
     public Round(Notificator notificator, Player firstPlayer, Player secondPlayer) {
@@ -59,7 +62,14 @@ public class Round implements Runnable {
         notificator.notifyRoundStart(secondPlayer.getId(), roundMessage);
     }
 
-    private void notifyUpdateFront(List<Card> firstPlayerCard, List<Card> secondPlayerCard, int attackIndex, int defenceIndex, boolean isAttackMove) {
+    private void notifyUpdateFront(List<Card> firstPlayerCard, List<Card> secondPlayerCard) {
+        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer.getActiveCards(), secondPlayer.getActiveCards());
+        notificator.notifyRoundStart(firstPlayer.getId(), roundMessage);
+        roundMessage = new WSRoundMessage(secondPlayer.getActiveCards(), firstPlayer.getActiveCards());
+        notificator.notifyRoundStart(secondPlayer.getId(), roundMessage);
+    }
+
+    private void notifyAttackFront(List<Card> firstPlayerCard, List<Card> secondPlayerCard, int attackIndex, int defenceIndex, boolean isAttackMove) {
         boolean isFirstPlayerAttack = isAttackMove == this.isFirstPlayerFirstAttack;
         int firstPlayerCardIndex = isFirstPlayerAttack ? attackIndex : defenceIndex;
         int secondPlayerCardIndex = isFirstPlayerAttack ? defenceIndex : attackIndex;
@@ -102,11 +112,12 @@ public class Round implements Runnable {
         int damageD = attackedCard.getDamage();
 
         if (this.isFirstPlayerFirstAttack) {
-            notifyUpdateFront(cardsOfAttack, cardsOfDefence, attackIndex, defenceIndex, !a1);
+            notifyAttackFront(cardsOfAttack, cardsOfDefence, attackIndexLocal, index, a1);
         } else {
-            notifyUpdateFront(cardsOfDefence, cardsOfAttack, attackIndex, defenceIndex, !a1);
+            notifyAttackFront(cardsOfDefence, cardsOfAttack, index, attackIndexLocal, a1);
         }
-        Thread.sleep(TimeUnit.SECONDS.toMillis(3));
+        logger.info("111111111111111111111111");
+        Thread.sleep(TimeUnit.SECONDS.toMillis(5));
 
         if (hp <= damage) { //если хп карты(например 1) <= чем урон ( например 2), то удаляем карту
             //TODO: Отправка на фронт события "уничтожение атакованной карты"
@@ -130,12 +141,6 @@ public class Round implements Runnable {
             attackCard.setHp(hpA - damageD);
             cardsOfAttack.set(attackIndexLocal, attackCard);
         }
-        if (this.isFirstPlayerFirstAttack) {
-            notifyUpdateFront(cardsOfAttack, cardsOfDefence, attackIndex, defenceIndex, a1);
-        } else {
-            notifyUpdateFront(cardsOfDefence, cardsOfAttack, attackIndex, defenceIndex, a1);
-        }
-        Thread.sleep(TimeUnit.SECONDS.toMillis(3));
 
         attackIndexLocal++;
         if (a1) {
@@ -177,6 +182,15 @@ public class Round implements Runnable {
         } else {
             //TODO: У двоих есть карты
             while (cardsOfAttack.size() > 0 && cardsOfDefence.size() > 0) {
+
+                if (this.isFirstPlayerFirstAttack) {
+                    notifyUpdateFront(cardsOfAttack, cardsOfDefence);
+                } else {
+                    notifyUpdateFront(cardsOfDefence, cardsOfAttack);
+                }
+                logger.info("222222222222222222222222");
+                Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+
                 List<List<Card>> cards;
                 //Атака атаки
                 cards = doMove(cardsOfAttack, attackIndex, cardsOfDefence, defenceIndex, true);
@@ -184,6 +198,16 @@ public class Round implements Runnable {
                 cardsOfDefence = cards.get(1);
 
                 if (cardsOfDefence.size() != 0 && cardsOfAttack.size() != 0) {
+
+                    if (this.isFirstPlayerFirstAttack) {
+                        notifyUpdateFront(cardsOfAttack, cardsOfDefence);
+                    } else {
+                        notifyUpdateFront(cardsOfDefence, cardsOfAttack);
+                    }
+                    logger.info("33333333333333333333333333");
+                    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+
+
                     //Атака защиты
                     cards = doMove(cardsOfDefence, defenceIndex, cardsOfAttack, attackIndex, false);
                     cardsOfAttack = cards.get(1);
@@ -215,6 +239,7 @@ public class Round implements Runnable {
                 //TODO: вернуть на фронт конец раунда
             }
         }
+
     }
 
     @Override
