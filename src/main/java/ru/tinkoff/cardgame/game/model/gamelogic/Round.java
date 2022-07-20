@@ -61,9 +61,13 @@ public class Round implements Runnable {
 
     private void notifyUpdateFront(List<Card> firstPlayerCard, List<Card> secondPlayerCard, int attackIndex, int defenceIndex, boolean isAttackMove) {
         boolean isFirstPlayerAttack = isAttackMove == this.isFirstPlayerFirstAttack;
-        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayerCard, secondPlayerCard, attackIndex, defenceIndex, isFirstPlayerAttack);
+        int firstPlayerCardIndex = isFirstPlayerAttack ? attackIndex : defenceIndex;
+        int secondPlayerCardIndex = isFirstPlayerAttack ? defenceIndex : attackIndex;
+
+        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayerCard, secondPlayerCard, firstPlayerCardIndex, secondPlayerCardIndex, isFirstPlayerAttack);
         notificator.notifyRoundUpdate(firstPlayer.getId(), roundMessage);
-        roundMessage = new WSRoundMessage(secondPlayerCard, firstPlayerCard, attackIndex, defenceIndex, !isFirstPlayerAttack);
+
+        roundMessage = new WSRoundMessage(secondPlayerCard, firstPlayerCard, secondPlayerCardIndex, firstPlayerCardIndex, !isFirstPlayerAttack);
         notificator.notifyRoundUpdate(secondPlayer.getId(), roundMessage);
     }
 

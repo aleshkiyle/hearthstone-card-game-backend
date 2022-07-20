@@ -9,23 +9,23 @@ import java.util.List;
 public class WSRoundMessage {
     private final List<Card> playerCard;
     private final List<Card> opponentCard;
-    private final int attackCardIndex;
-    private final int defenceCardIndex;
+    private final int playerCardIndex;
+    private final int opponentCardIndex;
     private final boolean isPlayerAttack;
 
-    public WSRoundMessage(List<Card> playerCard, List<Card> opponentCard, int attackCardIndex, int defenceCardIndex, boolean isPlayerAttack) {
+    public WSRoundMessage(List<Card> playerCard, List<Card> opponentCard, int playerCardIndex, int opponentCardIndex, boolean isPlayerAttack) {
         this.playerCard = playerCard;
         this.opponentCard = opponentCard;
-        this.attackCardIndex = attackCardIndex;
-        this.defenceCardIndex = defenceCardIndex;
+        this.playerCardIndex = playerCardIndex;
+        this.opponentCardIndex = opponentCardIndex;
         this.isPlayerAttack = isPlayerAttack;
     }
 
     public WSRoundMessage(List<Card> playerCard, List<Card> opponentCard) {
         this.playerCard = playerCard;
         this.opponentCard = opponentCard;
-        this.attackCardIndex = -1;
-        this.defenceCardIndex = -1;
+        this.playerCardIndex = -1;
+        this.opponentCardIndex = -1;
         this.isPlayerAttack = false;
     }
 
