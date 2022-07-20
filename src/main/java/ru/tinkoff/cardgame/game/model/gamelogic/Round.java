@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 import ru.tinkoff.cardgame.game.model.Notificator;
 import ru.tinkoff.cardgame.game.model.WSRoundMessage;
 import ru.tinkoff.cardgame.game.model.card.Card;
+import ru.tinkoff.cardgame.game.model.card.Spell;
+import ru.tinkoff.cardgame.game.model.card.SpellController;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -41,6 +43,12 @@ public class Round implements Runnable {
     }
 
     public void startRound() throws IOException, ClassNotFoundException {
+        SpellController.spell22Realisation(firstPlayer.getActiveCards());
+        SpellController.spell22Realisation(secondPlayer.getActiveCards());
+        SpellController.spell10Realisation(firstPlayer, firstPlayer.getActiveCards());
+        SpellController.spell10Realisation(secondPlayer, secondPlayer.getActiveCards());
+        SpellController.spell16Realisation(firstPlayer.getActiveCards());
+        SpellController.spell16Realisation(secondPlayer.getActiveCards());
         List<Player> players = new ArrayList<>();
         players.add(firstPlayer);
         players.add(secondPlayer);
@@ -71,7 +79,18 @@ public class Round implements Runnable {
         return new CopyOnWriteArrayList<>((List<Card>) ois.readObject());
     }
 
-    private List<List<Card>> doMove(List<Card> cardsOfAttack, int attackIndexLocal, List<Card> cardsOfDefence, int defenceIndexLocal, boolean a1) {
+    private void activateSpell(Spell spell, List<Card> cards, Player player, Card card) {
+        SpellController.spell7Realisation(cards, card);
+        switch (spell) {
+            case SPELL6 -> SpellController.spell6Realisation(cards);
+            case SPELL11 -> SpellController.spell11Realisation(cards);
+            case SPELL14 -> SpellController.spell14Realisation(cards);
+            case SPELL17 -> SpellController.spell2Realisation(player);
+            case SPELL21 -> SpellController.spell21Realisation(cards);
+        }
+    }
+
+    private List<List<Card>> doMove(List<Card> cardsOfAttack, int attackIndexLocal, List<Card> cardsOfDefence, int defenceIndexLocal, boolean a1, Player attacker, Player defender) {
         if (attackIndexLocal >= cardsOfAttack.size()) {
             attackIndexLocal = 0;
         }
@@ -79,14 +98,24 @@ public class Round implements Runnable {
         Card attackCard = cardsOfAttack.get(attackIndexLocal);  //карта наносящая урон
         Card attackedCard = cardsOfDefence.get(index); // карта получающая урон
 
+        Spell spellAttackCard = attackCard.getSpell();
+        Spell spellDefenceCard = attackedCard.getSpell();
+
         int hp = attackedCard.getHp();
         int damage = attackCard.getDamage();
         int hpA = attackCard.getHp();
         int damageD = attackedCard.getDamage();
 
+        switch (spellAttackCard) {
+            case SPELL5 -> damage += 1;
+            case SPELL15 -> damage *= 2;
+            case SPELL18 -> damage += 2;
+        }
+
         if (hp <= damage) { //если хп карты(например 1) <= чем урон ( например 2), то удаляем карту
             //TODO: Отправка на фронт события "уничтожение атакованной карты"
             cardsOfDefence.remove(index);
+            activateSpell(spellDefenceCard, cardsOfDefence, defender, attackedCard);
             if (index < defenceIndexLocal) {
                 defenceIndexLocal--;
             }
@@ -99,8 +128,9 @@ public class Round implements Runnable {
         }
         if (hpA <= damageD) {
             //TODO: уничтожение атакующей карты
-            cardsOfAttack.remove(attackIndexLocal);
 
+            cardsOfAttack.remove(attackIndexLocal);
+            activateSpell(spellAttackCard, cardsOfAttack, attacker, attackCard);
         } else {
             //TODO: Отправка на фронт события "получение урона атакующей картой"
             attackCard.setHp(hpA - damageD);
@@ -149,13 +179,13 @@ public class Round implements Runnable {
             while (cardsOfAttack.size() > 0 && cardsOfDefence.size() > 0) {
                 List<List<Card>> cards;
                 //Атака атаки
-                cards = doMove(cardsOfAttack, attackIndex, cardsOfDefence, defenceIndex, true);
+                cards = doMove(cardsOfAttack, attackIndex, cardsOfDefence, defenceIndex, true, players.get(0), players.get(1));
                 cardsOfAttack = cards.get(0);
                 cardsOfDefence = cards.get(1);
 
                 if (cardsOfDefence.size() != 0 && cardsOfAttack.size() != 0) {
                     //Атака защиты
-                    cards = doMove(cardsOfDefence, defenceIndex, cardsOfAttack, attackIndex, false);
+                    cards = doMove(cardsOfDefence, defenceIndex, cardsOfAttack, attackIndex, false, players.get(0), players.get(1));
                     cardsOfAttack = cards.get(1);
                     cardsOfDefence = cards.get(0);
                 }

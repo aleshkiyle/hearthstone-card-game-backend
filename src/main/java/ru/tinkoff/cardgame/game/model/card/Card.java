@@ -37,19 +37,4 @@ public class Card implements Cloneable, Serializable {
             throw new AssertionError();
         }
     }
-
-    @Override
-    public String toString() {
-        return "Card{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", price=" + price +
-                ", description='" + description + '\'' +
-                ", damage=" + damage +
-                ", hp=" + hp +
-                ", spell=" + spell +
-                ", lvl=" + lvl +
-                ", cardClass=" + cardClass +
-                '}';
-    }
 }
