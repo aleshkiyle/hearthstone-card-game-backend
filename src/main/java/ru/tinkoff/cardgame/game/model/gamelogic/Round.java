@@ -7,10 +7,7 @@ import ru.tinkoff.cardgame.game.model.WSRoundMessage;
 import ru.tinkoff.cardgame.game.model.card.Card;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -63,9 +60,9 @@ public class Round implements Runnable {
     }
 
     private void notifyUpdateFront(List<Card> firstPlayerCard, List<Card> secondPlayerCard) {
-        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer.getActiveCards(), secondPlayer.getActiveCards());
+        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayerCard, secondPlayerCard);
         notificator.notifyRoundStart(firstPlayer.getId(), roundMessage);
-        roundMessage = new WSRoundMessage(secondPlayer.getActiveCards(), firstPlayer.getActiveCards());
+        roundMessage = new WSRoundMessage(secondPlayerCard, firstPlayerCard);
         notificator.notifyRoundStart(secondPlayer.getId(), roundMessage);
     }
 
@@ -111,12 +108,11 @@ public class Round implements Runnable {
         int hpA = attackCard.getHp();
         int damageD = attackedCard.getDamage();
 
-        if (this.isFirstPlayerFirstAttack) {
+         if (this.isFirstPlayerFirstAttack == a1) {
             notifyAttackFront(cardsOfAttack, cardsOfDefence, attackIndexLocal, index, a1);
         } else {
             notifyAttackFront(cardsOfDefence, cardsOfAttack, index, attackIndexLocal, a1);
         }
-        logger.info("111111111111111111111111");
         Thread.sleep(TimeUnit.SECONDS.toMillis(5));
 
         if (hp <= damage) { //если хп карты(например 1) <= чем урон ( например 2), то удаляем карту
@@ -151,7 +147,7 @@ public class Round implements Runnable {
             attackIndex = defenceIndexLocal;
         }
 
-        return new CopyOnWriteArrayList<>(Arrays.asList(cardsOfAttack, cardsOfDefence));
+        return new LinkedList<>(Arrays.asList(cardsOfAttack, cardsOfDefence));
     }
 
     private void attackHero(List<Card> cardsOfAttack, Player playerA, Player playerD) {
@@ -188,7 +184,6 @@ public class Round implements Runnable {
                 } else {
                     notifyUpdateFront(cardsOfDefence, cardsOfAttack);
                 }
-                logger.info("222222222222222222222222");
                 Thread.sleep(TimeUnit.SECONDS.toMillis(5));
 
                 List<List<Card>> cards;
@@ -204,7 +199,6 @@ public class Round implements Runnable {
                     } else {
                         notifyUpdateFront(cardsOfDefence, cardsOfAttack);
                     }
-                    logger.info("33333333333333333333333333");
                     Thread.sleep(TimeUnit.SECONDS.toMillis(5));
 
 
@@ -237,6 +231,13 @@ public class Round implements Runnable {
                 }
                 //последняя карта(сброс цикла)
                 //TODO: вернуть на фронт конец раунда
+                if (this.isFirstPlayerFirstAttack) {
+                    notifyUpdateFront(cardsOfAttack, cardsOfDefence);
+                } else {
+                    notifyUpdateFront(cardsOfDefence, cardsOfAttack);
+                }
+                Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+
             }
         }
 
