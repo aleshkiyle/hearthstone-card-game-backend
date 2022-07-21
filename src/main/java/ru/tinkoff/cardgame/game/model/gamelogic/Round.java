@@ -2,11 +2,10 @@ package ru.tinkoff.cardgame.game.model.gamelogic;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import ru.tinkoff.cardgame.game.model.Notificator;
-import ru.tinkoff.cardgame.game.model.WSRoundMessage;
+import ru.tinkoff.cardgame.game.Notificator;
+import ru.tinkoff.cardgame.game.websocketmessages.RoundMessage;
 import ru.tinkoff.cardgame.game.model.card.Card;
 import ru.tinkoff.cardgame.game.model.card.Spell;
-import ru.tinkoff.cardgame.game.model.card.SpellController;
 
 import java.io.*;
 import java.util.*;
@@ -56,16 +55,16 @@ public class Round implements Runnable {
     }
 
     private void notifyFront() {
-        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer, secondPlayer, firstPlayer.getActiveCards(), secondPlayer.getActiveCards());
+        RoundMessage roundMessage = new RoundMessage(firstPlayer, secondPlayer, firstPlayer.getActiveCards(), secondPlayer.getActiveCards());
         notificator.notifyRoundStart(firstPlayer.getId(), roundMessage);
-        roundMessage = new WSRoundMessage(secondPlayer, firstPlayer, secondPlayer.getActiveCards(), firstPlayer.getActiveCards());
+        roundMessage = new RoundMessage(secondPlayer, firstPlayer, secondPlayer.getActiveCards(), firstPlayer.getActiveCards());
         notificator.notifyRoundStart(secondPlayer.getId(), roundMessage);
     }
 
     private void notifyUpdateFront(List<Card> firstPlayerCard, List<Card> secondPlayerCard) {
-        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer, secondPlayer, firstPlayerCard, secondPlayerCard);
+        RoundMessage roundMessage = new RoundMessage(firstPlayer, secondPlayer, firstPlayerCard, secondPlayerCard);
         notificator.notifyRoundStart(firstPlayer.getId(), roundMessage);
-        roundMessage = new WSRoundMessage(secondPlayer, firstPlayer, secondPlayerCard, firstPlayerCard);
+        roundMessage = new RoundMessage(secondPlayer, firstPlayer, secondPlayerCard, firstPlayerCard);
         notificator.notifyRoundStart(secondPlayer.getId(), roundMessage);
     }
 
@@ -74,10 +73,10 @@ public class Round implements Runnable {
         int firstPlayerCardIndex = isFirstPlayerAttack ? attackIndex : defenceIndex;
         int secondPlayerCardIndex = isFirstPlayerAttack ? defenceIndex : attackIndex;
 
-        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer, secondPlayer, firstPlayerCard, secondPlayerCard, firstPlayerCardIndex, secondPlayerCardIndex, isFirstPlayerAttack);
+        RoundMessage roundMessage = new RoundMessage(firstPlayer, secondPlayer, firstPlayerCard, secondPlayerCard, firstPlayerCardIndex, secondPlayerCardIndex, isFirstPlayerAttack);
         notificator.notifyRoundUpdate(firstPlayer.getId(), roundMessage);
 
-        roundMessage = new WSRoundMessage(secondPlayer, firstPlayer, secondPlayerCard, firstPlayerCard, secondPlayerCardIndex, firstPlayerCardIndex, !isFirstPlayerAttack);
+        roundMessage = new RoundMessage(secondPlayer, firstPlayer, secondPlayerCard, firstPlayerCard, secondPlayerCardIndex, firstPlayerCardIndex, !isFirstPlayerAttack);
         notificator.notifyRoundUpdate(secondPlayer.getId(), roundMessage);
     }
 

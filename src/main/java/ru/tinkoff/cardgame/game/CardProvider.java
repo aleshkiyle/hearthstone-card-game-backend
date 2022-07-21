@@ -1,4 +1,8 @@
-package ru.tinkoff.cardgame.game.model.card;
+package ru.tinkoff.cardgame.game;
+
+import ru.tinkoff.cardgame.game.model.card.Card;
+import ru.tinkoff.cardgame.game.model.card.CardClass;
+import ru.tinkoff.cardgame.game.model.card.Spell;
 
 import java.util.ArrayList;
 import java.util.List;

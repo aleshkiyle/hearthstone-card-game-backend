@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.tinkoff.cardgame.game.exceptions.IncorrectPlayerActionException;
 import ru.tinkoff.cardgame.game.model.card.Card;
 import ru.tinkoff.cardgame.game.model.card.Spell;
-import ru.tinkoff.cardgame.game.model.card.SpellController;
+import ru.tinkoff.cardgame.game.model.gamelogic.SpellController;
 import ru.tinkoff.cardgame.game.model.gamelogic.Player;
 import ru.tinkoff.cardgame.game.model.gamelogic.Shop;
 

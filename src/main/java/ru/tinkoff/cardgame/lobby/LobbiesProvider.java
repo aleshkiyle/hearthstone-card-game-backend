@@ -1,4 +1,6 @@
-package ru.tinkoff.cardgame.lobby.model;
+package ru.tinkoff.cardgame.lobby;
+
+import ru.tinkoff.cardgame.lobby.model.Lobby;
 
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
