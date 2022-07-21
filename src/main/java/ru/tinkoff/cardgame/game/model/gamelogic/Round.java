@@ -231,6 +231,13 @@ public class Round implements Runnable {
                 }
                 //последняя карта(сброс цикла)
                 //TODO: вернуть на фронт конец раунда
+                if (this.isFirstPlayerFirstAttack) {
+                    notifyUpdateFront(cardsOfAttack, cardsOfDefence);
+                } else {
+                    notifyUpdateFront(cardsOfDefence, cardsOfAttack);
+                }
+                Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+
             }
 
             if (this.isFirstPlayerFirstAttack) {
