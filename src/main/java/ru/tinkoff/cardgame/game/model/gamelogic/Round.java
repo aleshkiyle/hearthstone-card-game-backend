@@ -14,16 +14,11 @@ import java.util.concurrent.TimeUnit;
 public class Round implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(Round.class);
-
     private final Notificator notificator;
     private final Player firstPlayer;
     private final Player secondPlayer;
     private int attackIndex = 0;
     private int defenceIndex = 0;
-
-    private List<Card> cardsOfAttack;
-    private List<Card> cardsOfDefence;
-
     private boolean isFirstPlayerFirstAttack;
 
     public Round(Notificator notificator, Player firstPlayer, Player secondPlayer) {
