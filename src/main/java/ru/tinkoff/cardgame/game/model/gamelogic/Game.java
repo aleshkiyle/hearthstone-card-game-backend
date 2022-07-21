@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.SendTo;
 import ru.tinkoff.cardgame.game.model.Notificator;
+import ru.tinkoff.cardgame.game.model.WSGameOverMessage;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -84,6 +85,7 @@ public class Game {
     private void finishRound() {
         logger.info("FINISH ROUND №" + this.roundNumber);
         this.roundNumber++;
+        players.stream().filter(p->p.getHp() <= 0).forEach(this::kickPlayer);
         if (isGameEnd()) {
             finishGame();
         } else {
@@ -120,9 +122,18 @@ public class Game {
         return this.players.stream().filter(p -> p.getHp() > 0).count() == 1;
     }
 
+    private void kickPlayer(Player player) {
+        WSGameOverMessage gameOverMessage = new WSGameOverMessage(player.getUsername(), false);
+        notificator.notifyGameOver(player.getId(), gameOverMessage);
+
+    }
+
     private void finishGame() {
         logger.info("GAME OVER");
-        logger.info("WINNER: " + this.players.stream().filter(p -> p.getHp() > 0).findFirst());
+        Player winner = this.players.stream().filter(p -> p.getHp() > 0).findFirst().get();
+        logger.info("WINNER: " + winner);
+        WSGameOverMessage gameOverMessage = new WSGameOverMessage(winner.getUsername(), true);
+        notificator.notifyGameOver(winner.getId(), gameOverMessage);
         GameProvider.INSTANCE.getGames().remove(this);
     }
 

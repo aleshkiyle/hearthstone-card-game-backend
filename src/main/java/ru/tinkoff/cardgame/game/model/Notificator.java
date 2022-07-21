@@ -22,16 +22,20 @@ public class Notificator {
     }
 
     public void notifyShopUpdate(String playerSessionId, WSRoundMessage roundMessage) {
-        notifyFront(playerSessionId, "/queue/game/shop/update",roundMessage);
+        notifyFront(playerSessionId, "/queue/game/shop/update", roundMessage);
     }
 
     public void notifyRoundStart(String playerSessionId, WSRoundMessage roundMessage) {
-        notifyFront(playerSessionId, "/queue/game/round/start",roundMessage);
+        notifyFront(playerSessionId, "/queue/game/round/start", roundMessage);
     }
 
 
     public void notifyRoundUpdate(String playerSessionId, WSRoundMessage roundMessage) {
-        notifyFront(playerSessionId, "/queue/game/round/update",roundMessage);
+        notifyFront(playerSessionId, "/queue/game/round/update", roundMessage);
+    }
+
+    public void notifyGameOver(String playerSessionId, WSGameOverMessage gameOverMessage) {
+        notifyFront(playerSessionId, "/queue/game/end", gameOverMessage);
     }
 
     private void notifyFront(String playerSessionId, String path, Object payload) {

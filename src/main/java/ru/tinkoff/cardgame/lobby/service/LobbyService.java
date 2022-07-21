@@ -69,7 +69,7 @@ public class LobbyService {
 
     private void createGame(Lobby lobby, Notificator notificator) throws LobbyException {
         List<Player> playerList = new ArrayList<>();
-        lobby.getUsers().forEach(u -> playerList.add(new Player(u.getSessionId())));
+        lobby.getUsers().forEach(u -> playerList.add(new Player(u.getSessionId(), u.getUsername())));
         Game game = new Game(lobby.getId(), playerList, notificator);
         GameProvider.INSTANCE.getGames().add(game);
         game.startGame();

@@ -9,6 +9,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Player {
 
     private final String id;
+
+    private final String username;
     private int hp;
     private int gold;
     private final CopyOnWriteArrayList<Card> activeCards;
@@ -16,9 +18,10 @@ public class Player {
     private final Shop shop;
     private int maxGold;
 
-    public Player(String id) {
+    public Player(String id, String username) {
         this.id = id;
-        this.hp = 100;
+        this.username = username;
+        this.hp = 3;
         this.gold = 3;
         this.activeCards = new CopyOnWriteArrayList<>();
         this.invCards = new CopyOnWriteArrayList<>();
