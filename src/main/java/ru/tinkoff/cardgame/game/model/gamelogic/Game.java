@@ -99,11 +99,7 @@ public class Game {
                 p.getShop().updateShop();
             }
         });
-        players.forEach(p -> {
-            if (p.getShop().getUpgradePrice() > 1) {
-                p.getShop().setUpgradePrice(p.getShop().getUpgradePrice() - 1);
-            }
-        });
+        players.forEach(p ->  p.getShop().decreaseUpgradePrice());
         players.forEach(p -> {
             if (p.getMaxGold() < MAX_PLAYER_GOLD) {
                 p.setMaxGold(p.getMaxGold() + 1);
