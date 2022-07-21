@@ -15,6 +15,7 @@ public class Card implements Cloneable, Serializable {
     private Spell spell;
     private int lvl;
     private CardClass cardClass;
+    private boolean isTriplet = false;
 
     public Card(String name, int price, String description, int damage, int hp, Spell spell, int lvl, CardClass cardClass) {
         this.name = name;
