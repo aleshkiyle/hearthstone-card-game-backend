@@ -2,6 +2,9 @@ package ru.tinkoff.cardgame.game.services;
 
 import org.springframework.stereotype.Service;
 import ru.tinkoff.cardgame.game.exceptions.IncorrectPlayerActionException;
+import ru.tinkoff.cardgame.game.model.card.Card;
+import ru.tinkoff.cardgame.game.model.card.Spell;
+import ru.tinkoff.cardgame.game.model.card.SpellController;
 import ru.tinkoff.cardgame.game.model.gamelogic.Player;
 import ru.tinkoff.cardgame.game.model.gamelogic.Shop;
 
@@ -63,6 +66,18 @@ public class PlayerService {
      */
     public void putCardToTable(Player player, int cardIndex) throws IncorrectPlayerActionException {
         if (player.getActiveCards().size() < MAX_CARD_COUNT) {
+            Card card = player.getInvCards().get(cardIndex);
+            Spell spell = card.getSpell();
+            switch (spell) {
+                case SPELL1 -> SpellController.spell1Realisation(player.getActiveCards());
+                case SPELL2 -> SpellController.spell2Realisation(player);
+                case SPELL3 -> SpellController.spell3Realisation(player.getActiveCards(), card);
+                case SPELL4 -> SpellController.spell4Realisation(player.getActiveCards(), card);
+                case SPELL8 -> player.getShop().decreaseUpgradePrice();
+                case SPELL12 -> SpellController.spell12Realisation(player.getActiveCards(), card);
+                case SPELL19 -> SpellController.spell19Realisation(player.getActiveCards());
+                case SPELL20 -> SpellController.spell20Realisation(player.getActiveCards());
+            }
             player.getActiveCards().add(player.getInvCards().remove(cardIndex));
         } else {
             throw new IncorrectPlayerActionException();
@@ -73,16 +88,26 @@ public class PlayerService {
     Sell card from inventory
      */
     public void sellInventoryCard(Player player, int cardIndex) {
+        Spell spell = player.getInvCards().get(cardIndex).getSpell();
         player.getInvCards().remove(cardIndex);
-        player.increaseGold(SELL_CARD_PRICE);
+        switch (spell) {
+            case SPELL9 -> player.increaseGold(SELL_CARD_PRICE + 1);
+            case SPELL13 -> player.increaseGold(SELL_CARD_PRICE + 2);
+            default -> player.increaseGold(SELL_CARD_PRICE);
+        }
     }
 
     /*
     Sell a card from the field
      */
     public void sellActiveCard(Player player, int cardIndex) {
+        Spell spell = player.getActiveCards().get(cardIndex).getSpell();
         player.getActiveCards().remove(cardIndex);
-        player.increaseGold(SELL_CARD_PRICE);
+        switch (spell) {
+            case SPELL9 -> player.increaseGold(SELL_CARD_PRICE + 1);
+            case SPELL13 -> player.increaseGold(SELL_CARD_PRICE + 2);
+            default -> player.increaseGold(SELL_CARD_PRICE);
+        }
     }
 
     /*

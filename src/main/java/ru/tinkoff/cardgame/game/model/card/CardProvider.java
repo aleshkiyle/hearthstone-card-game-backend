@@ -9,11 +9,7 @@ public enum CardProvider {
 
     private final ArrayList<Card> cards = new ArrayList<>();
 
-    CardProvider() {
-        addCards();
-    }
-
-    private void addCards(){
+    {
         cards.add(new Card("Ингрид Ильва", 3, "Белая ведьма, способная овладеть магией.", 2, 1, Spell.SPELL1, 1, CardClass.Witch));
         cards.add(new Card("Лаума", 3, "Ведьма, управляет силами природы, ночами душит спящих, насылает кошмары, подменяет детей.", 2, 4, Spell.SPELL4, 2, CardClass.Witch));
         cards.add(new Card("Геката", 3, "Королева ведьм, олицетворяющая исключительно силы мрака.", 3, 5, Spell.SPELL10, 3, CardClass.Witch));
