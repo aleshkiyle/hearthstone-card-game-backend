@@ -34,7 +34,7 @@ public class Round implements Runnable {
         try {
             notifyFront();
             startRound();
-            Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+            //Thread.sleep(TimeUnit.SECONDS.toMillis(5));
         } catch (IOException | ClassNotFoundException | InterruptedException e) {
             throw new RuntimeException(e);
         }
@@ -56,16 +56,16 @@ public class Round implements Runnable {
     }
 
     private void notifyFront() {
-        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer.getActiveCards(), secondPlayer.getActiveCards());
+        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer, secondPlayer, firstPlayer.getActiveCards(), secondPlayer.getActiveCards());
         notificator.notifyRoundStart(firstPlayer.getId(), roundMessage);
-        roundMessage = new WSRoundMessage(secondPlayer.getActiveCards(), firstPlayer.getActiveCards());
+        roundMessage = new WSRoundMessage(secondPlayer, firstPlayer, secondPlayer.getActiveCards(), firstPlayer.getActiveCards());
         notificator.notifyRoundStart(secondPlayer.getId(), roundMessage);
     }
 
     private void notifyUpdateFront(List<Card> firstPlayerCard, List<Card> secondPlayerCard) {
-        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayerCard, secondPlayerCard);
+        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer, secondPlayer, firstPlayerCard, secondPlayerCard);
         notificator.notifyRoundStart(firstPlayer.getId(), roundMessage);
-        roundMessage = new WSRoundMessage(secondPlayerCard, firstPlayerCard);
+        roundMessage = new WSRoundMessage(secondPlayer, firstPlayer, secondPlayerCard, firstPlayerCard);
         notificator.notifyRoundStart(secondPlayer.getId(), roundMessage);
     }
 
@@ -74,10 +74,10 @@ public class Round implements Runnable {
         int firstPlayerCardIndex = isFirstPlayerAttack ? attackIndex : defenceIndex;
         int secondPlayerCardIndex = isFirstPlayerAttack ? defenceIndex : attackIndex;
 
-        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayerCard, secondPlayerCard, firstPlayerCardIndex, secondPlayerCardIndex, isFirstPlayerAttack);
+        WSRoundMessage roundMessage = new WSRoundMessage(firstPlayer, secondPlayer, firstPlayerCard, secondPlayerCard, firstPlayerCardIndex, secondPlayerCardIndex, isFirstPlayerAttack);
         notificator.notifyRoundUpdate(firstPlayer.getId(), roundMessage);
 
-        roundMessage = new WSRoundMessage(secondPlayerCard, firstPlayerCard, secondPlayerCardIndex, firstPlayerCardIndex, !isFirstPlayerAttack);
+        roundMessage = new WSRoundMessage(secondPlayer, firstPlayer, secondPlayerCard, firstPlayerCard, secondPlayerCardIndex, firstPlayerCardIndex, !isFirstPlayerAttack);
         notificator.notifyRoundUpdate(secondPlayer.getId(), roundMessage);
     }
 
@@ -108,7 +108,7 @@ public class Round implements Runnable {
         }
     }
 
-    private List<List<Card>> doMove(List<Card> cardsOfAttack, int attackIndexLocal, List<Card> cardsOfDefence, int defenceIndexLocal, boolean a1, Player attacker, Player defender) {
+    private List<List<Card>> doMove(List<Card> cardsOfAttack, int attackIndexLocal, List<Card> cardsOfDefence, int defenceIndexLocal, boolean a1, Player attacker, Player defender) throws InterruptedException {
         if (attackIndexLocal >= cardsOfAttack.size()) {
             attackIndexLocal = 0;
         }
@@ -130,6 +130,13 @@ public class Round implements Runnable {
             case SPELL15 -> damage *= 2;
             case SPELL18 -> damage += 2;
         }
+
+        if (this.isFirstPlayerFirstAttack == a1) {
+            notifyAttackFront(cardsOfAttack, cardsOfDefence, attackIndexLocal, index, a1);
+        } else {
+            notifyAttackFront(cardsOfDefence, cardsOfAttack, index, attackIndexLocal, a1);
+        }
+        Thread.sleep(TimeUnit.SECONDS.toMillis(5));
 
         if (hp <= damage) { //если хп карты(например 1) <= чем урон ( например 2), то удаляем карту
             //TODO: Отправка на фронт события "уничтожение атакованной карты"

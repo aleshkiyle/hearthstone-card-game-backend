@@ -5,6 +5,8 @@ import org.springframework.messaging.simp.SimpMessageType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import ru.tinkoff.cardgame.game.model.gamelogic.Player;
 
+import java.util.List;
+
 public class Notificator {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
@@ -13,12 +15,13 @@ public class Notificator {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    public void notifyGameStart(String playerSessionId, Player player) {
-        notifyFront(playerSessionId, "/queue/game/start", player);
+    public void notifyGameStart(String playerSessionId, Player player, List<Player> players) {
+        notifyFront(playerSessionId, "/queue/game/start", new WSShopMessage(player, players));
     }
 
-    public void notifyShopStart(String playerSessionId, Player player) {
-        notifyFront(playerSessionId, "/queue/game/shop/start", player);
+    public void notifyShopStart(String playerSessionId, Player player, List<Player> players) {
+
+        notifyFront(playerSessionId, "/queue/game/shop/start", new WSShopMessage(player, players));
     }
 
     public void notifyShopUpdate(String playerSessionId, WSRoundMessage roundMessage) {

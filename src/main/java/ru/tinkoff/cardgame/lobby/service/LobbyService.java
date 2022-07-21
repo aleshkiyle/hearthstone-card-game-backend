@@ -73,7 +73,7 @@ public class LobbyService {
         Game game = new Game(lobby.getId(), playerList, notificator);
         GameProvider.INSTANCE.getGames().add(game);
         game.startGame();
-        game.getPlayers().forEach(p -> notificator.notifyGameStart(p.getId(), p));
+        game.getPlayers().forEach(p -> notificator.notifyGameStart(p.getId(), p, playerList));
         lobby.start();
     }
 }

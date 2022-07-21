@@ -55,7 +55,7 @@ public class Game {
 
     private void startTimer() {
         logger.info("START TIMER");
-        this.players.forEach(p -> notificator.notifyShopStart(p.getId(), p));
+        this.players.forEach(p -> notificator.notifyShopStart(p.getId(), p, this.players));
         new Thread(new Timer(this, 15)).start();
     }
 
