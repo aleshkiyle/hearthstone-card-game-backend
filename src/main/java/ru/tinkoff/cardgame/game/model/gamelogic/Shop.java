@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @Data
 public class Shop {
 
-    private static final int START_SHOP_CARD_NUMBER = 37;
+    private static final int START_SHOP_CARD_NUMBER = 3;
     public static final int MAX_SHOP_LEVEL = 5;
     private static final int BASE_VALUE_UPGRADE_PRICE = 5;
 

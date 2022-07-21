@@ -21,7 +21,7 @@ public class Player {
     public Player(String id, String username) {
         this.id = id;
         this.username = username;
-        this.hp = 3;
+        this.hp = 30;
         this.gold = 3;
         this.activeCards = new CopyOnWriteArrayList<>();
         this.invCards = new CopyOnWriteArrayList<>();
