@@ -10,6 +10,7 @@ import ru.tinkoff.cardgame.game.websocketmessages.GameOverMessage;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game {
@@ -86,7 +87,7 @@ public class Game {
     private void finishRound() {
         logger.info("FINISH ROUND №" + this.roundNumber);
         this.roundNumber++;
-        players.stream().filter(p->p.getHp() <= 0).forEach(this::kickPlayer);
+        players.stream().filter(p -> p.getHp() <= 0).forEach(this::kickPlayer);
         if (isGameEnd()) {
             finishGame();
         } else {
@@ -100,13 +101,13 @@ public class Game {
                 p.getShop().updateShop();
             }
         });
-        players.forEach(p ->  p.getShop().decreaseUpgradePrice());
+        players.forEach(p -> p.getShop().decreaseUpgradePrice());
         players.forEach(p -> {
             if (p.getMaxGold() < MAX_PLAYER_GOLD) {
                 p.setMaxGold(p.getMaxGold() + 1);
             }
         });
-        players.forEach(p-> {
+        players.forEach(p -> {
             if (p.getShop().isFreezeStatus()) {
                 p.getShop().setFreezeStatus(false);
             }
@@ -116,10 +117,11 @@ public class Game {
     }
 
     private boolean isGameEnd() {
-        return this.players.stream().filter(p -> p.getHp() > 0).count() == 1;
+        return this.players.stream().filter(p -> p.getHp() > 0).count() <= 1;
     }
 
     private void kickPlayer(Player player) {
+        player.setHp(0);
         GameOverMessage gameOverMessage = new GameOverMessage(player.getUsername(), false);
         notificator.notifyGameOver(player.getId(), gameOverMessage);
 
@@ -127,11 +129,18 @@ public class Game {
 
     private void finishGame() {
         logger.info("GAME OVER");
-        Player winner = this.players.stream().filter(p -> p.getHp() > 0).findFirst().get();
-        logger.info("WINNER: " + winner);
-        GameOverMessage gameOverMessage = new GameOverMessage(winner.getUsername(), true);
-        notificator.notifyGameOver(winner.getId(), gameOverMessage);
+        Optional<Player> winner = this.players.stream().filter(p -> p.getHp() > 0).findFirst();
+        if (winner.isPresent()) {
+            logger.info("WINNER: " + winner.get());
+            GameOverMessage gameOverMessage = new GameOverMessage(winner.get().getUsername(), true);
+            notificator.notifyGameOver(winner.get().getId(), gameOverMessage);
+        }
+
         GameProvider.INSTANCE.getGames().remove(this);
+    }
+
+    public void stopGame() {
+        players.forEach(this::kickPlayer);
     }
 
     @Override

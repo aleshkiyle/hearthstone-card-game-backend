@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import ru.tinkoff.cardgame.game.GameProvider;
+import ru.tinkoff.cardgame.game.model.gamelogic.Game;
 import ru.tinkoff.cardgame.lobby.LobbiesProvider;
 import ru.tinkoff.cardgame.lobby.model.Lobby;
 import ru.tinkoff.cardgame.lobby.model.LobbyStatus;
@@ -49,6 +50,7 @@ public class WebSocketEventListener {
                 LobbiesProvider.INSTANCE.getLobbies().remove(lobby.get());
                 logger.info("REMOVE lobby " + lobby);
                 if (lobby.get().getStatus() != LobbyStatus.CREATED) {
+                    GameProvider.INSTANCE.findGame(lobby.get().getId()).stopGame();
                     GameProvider.INSTANCE.getGames().removeIf(g->g.getId().equals(lobby.get().getId()));
                     logger.info("REMOVE GAME " + lobby.get().getId());
                 }
