@@ -1,10 +1,13 @@
 package ru.tinkoff.cardgame.lobby.model;
 
+import lombok.Data;
 import ru.tinkoff.cardgame.lobby.exceptions.LobbyException;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
+@Data
 public class Lobby {
+
     private final String id;
     private final int playerCount;
 
@@ -17,26 +20,6 @@ public class Lobby {
         this.playerCount = playerCount;
         this.status = LobbyStatus.CREATED;
         this.users = new CopyOnWriteArrayList<>();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public int getPlayerCount() {
-        return playerCount;
-    }
-
-    public LobbyStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(LobbyStatus status) {
-        this.status = status;
-    }
-
-    public CopyOnWriteArrayList<User> getUsers() {
-        return users;
     }
 
     public void addUser(User user) throws LobbyException {
@@ -70,16 +53,6 @@ public class Lobby {
         } else {
             throw new LobbyException();
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Lobby{" +
-                "id='" + id + '\'' +
-                ", playerCount=" + playerCount +
-                ", status=" + status +
-                ", users=" + users +
-                '}';
     }
 
 }
