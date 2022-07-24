@@ -122,7 +122,7 @@ public class Game {
         return this.players.stream().filter(p -> p.getHp() > 0).count() <= 1;
     }
 
-    private void kickPlayer(Player player) {
+    public void kickPlayer(Player player) {
         player.setHp(0);
         GameOverMessage gameOverMessage = new GameOverMessage(player.getUsername(), false);
         notificator.notifyGameOver(player.getId(), gameOverMessage);
