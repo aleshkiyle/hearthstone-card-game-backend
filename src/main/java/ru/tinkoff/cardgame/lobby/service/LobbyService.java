@@ -3,12 +3,12 @@ package ru.tinkoff.cardgame.lobby.service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import ru.tinkoff.cardgame.game.model.Notificator;
+import ru.tinkoff.cardgame.game.Notificator;
 import ru.tinkoff.cardgame.game.model.gamelogic.Game;
-import ru.tinkoff.cardgame.game.model.gamelogic.GameProvider;
+import ru.tinkoff.cardgame.game.GameProvider;
 import ru.tinkoff.cardgame.game.model.gamelogic.Player;
 import ru.tinkoff.cardgame.lobby.exceptions.LobbyException;
-import ru.tinkoff.cardgame.lobby.model.LobbiesProvider;
+import ru.tinkoff.cardgame.lobby.LobbiesProvider;
 import ru.tinkoff.cardgame.lobby.model.Lobby;
 import ru.tinkoff.cardgame.lobby.model.LobbyStatus;
 import ru.tinkoff.cardgame.lobby.model.User;
@@ -20,7 +20,7 @@ import java.util.Optional;
 @Service
 public class LobbyService {
 
-    private static final int MAX_PLAYERS = 2;
+    private static final int MAX_PLAYERS = 4;
 
     public ResponseEntity<String> checkLobby(String id) {
         Optional<Lobby> lobby = LobbiesProvider.INSTANCE.getLobbies().stream()

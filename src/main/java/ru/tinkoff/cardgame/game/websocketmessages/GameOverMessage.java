@@ -1,13 +1,13 @@
-package ru.tinkoff.cardgame.game.model;
+package ru.tinkoff.cardgame.game.websocketmessages;
 
 import lombok.Data;
 
 @Data
-public class WSGameOverMessage {
+public class GameOverMessage {
     String username;
     boolean isWinner;
 
-    public WSGameOverMessage(String username, boolean isWinner) {
+    public GameOverMessage(String username, boolean isWinner) {
         this.username = username;
         this.isWinner = isWinner;
     }

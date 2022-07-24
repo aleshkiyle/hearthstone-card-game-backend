@@ -2,7 +2,7 @@ package ru.tinkoff.cardgame.game.model.gamelogic;
 
 import lombok.Data;
 import ru.tinkoff.cardgame.game.model.card.Card;
-import ru.tinkoff.cardgame.game.model.card.CardProvider;
+import ru.tinkoff.cardgame.game.CardProvider;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 

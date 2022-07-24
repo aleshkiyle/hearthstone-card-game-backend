@@ -1,4 +1,6 @@
-package ru.tinkoff.cardgame.game.model.gamelogic;
+package ru.tinkoff.cardgame.game;
+
+import ru.tinkoff.cardgame.game.model.gamelogic.Game;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 

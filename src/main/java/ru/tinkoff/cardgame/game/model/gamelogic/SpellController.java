@@ -1,5 +1,8 @@
-package ru.tinkoff.cardgame.game.model.card;
+package ru.tinkoff.cardgame.game.model.gamelogic;
 
+import ru.tinkoff.cardgame.game.model.card.Card;
+import ru.tinkoff.cardgame.game.model.card.CardClass;
+import ru.tinkoff.cardgame.game.model.card.Spell;
 import ru.tinkoff.cardgame.game.model.gamelogic.Player;
 
 import java.util.List;

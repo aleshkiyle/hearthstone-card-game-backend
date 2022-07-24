@@ -9,17 +9,16 @@ public class Card implements Cloneable, Serializable {
 
     private String name;
     private int price;
-    private String description;
     private int damage;
     private int hp;
     private Spell spell;
     private int lvl;
     private CardClass cardClass;
+    private boolean isTriplet = false;
 
-    public Card(String name, int price, String description, int damage, int hp, Spell spell, int lvl, CardClass cardClass) {
+    public Card(String name, int price, int damage, int hp, Spell spell, int lvl, CardClass cardClass) {
         this.name = name;
         this.price = price;
-        this.description = description;
         this.damage = damage;
         this.hp = hp;
         this.spell = spell;

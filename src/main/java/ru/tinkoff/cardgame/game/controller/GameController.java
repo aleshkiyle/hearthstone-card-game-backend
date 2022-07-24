@@ -11,9 +11,9 @@ import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.stereotype.Controller;
 import ru.tinkoff.cardgame.game.exceptions.GameException;
 import ru.tinkoff.cardgame.game.exceptions.IncorrectPlayerActionException;
-import ru.tinkoff.cardgame.game.model.WSShopMessage;
+import ru.tinkoff.cardgame.game.websocketmessages.ShopMessage;
 import ru.tinkoff.cardgame.game.model.gamelogic.Game;
-import ru.tinkoff.cardgame.game.model.gamelogic.GameProvider;
+import ru.tinkoff.cardgame.game.GameProvider;
 import ru.tinkoff.cardgame.game.model.gamelogic.Player;
 import ru.tinkoff.cardgame.game.services.PlayerService;
 import ru.tinkoff.cardgame.lobby.model.WSLobbyMessage;
@@ -33,94 +33,94 @@ public class GameController {
 
     @MessageMapping("/game.buyCard")
     @SendToUser("/queue/game/shop/update")
-    public WSShopMessage buyCard(SimpMessageHeaderAccessor headerAccessor, @Header("simpSessionId") String sessionId,
-                          @Payload int cardIndex) throws IncorrectPlayerActionException {
+    public ShopMessage buyCard(SimpMessageHeaderAccessor headerAccessor, @Header("simpSessionId") String sessionId,
+                               @Payload int cardIndex) throws IncorrectPlayerActionException {
         Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.buyCardFromShop(player, cardIndex);
         List<Player> players = findGame(headerAccessor).getPlayers();
-        return new WSShopMessage(player, players);
+        return new ShopMessage(player, players);
     }
 
     @MessageMapping("/game.changeFreezeShop")
     @SendToUser("/queue/game/shop/update")
-    public WSShopMessage changeFreezeShop(SimpMessageHeaderAccessor headerAccessor,
-                                   @Header("simpSessionId") String sessionId) {
+    public ShopMessage changeFreezeShop(SimpMessageHeaderAccessor headerAccessor,
+                                        @Header("simpSessionId") String sessionId) {
         Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.changeFreezeShop(player);
         List<Player> players = findGame(headerAccessor).getPlayers();
-        return new WSShopMessage(player, players);
+        return new ShopMessage(player, players);
     }
 
     @MessageMapping("/game.updateShop")
     @SendToUser("/queue/game/shop/update")
-    public WSShopMessage updateShop(SimpMessageHeaderAccessor headerAccessor,
-                             @Header("simpSessionId") String sessionId) throws IncorrectPlayerActionException {
+    public ShopMessage updateShop(SimpMessageHeaderAccessor headerAccessor,
+                                  @Header("simpSessionId") String sessionId) throws IncorrectPlayerActionException {
         Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.updateShop(player);
         List<Player> players = findGame(headerAccessor).getPlayers();
-        return new WSShopMessage(player, players);
+        return new ShopMessage(player, players);
     }
 
     @MessageMapping("/game.upgradeShop")
     @SendToUser("/queue/game/shop/update")
-    public WSShopMessage upgradeShop(SimpMessageHeaderAccessor headerAccessor,
-                              @Header("simpSessionId") String sessionId) throws IncorrectPlayerActionException {
+    public ShopMessage upgradeShop(SimpMessageHeaderAccessor headerAccessor,
+                                   @Header("simpSessionId") String sessionId) throws IncorrectPlayerActionException {
         Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.upgradeLevelShop(player);
         List<Player> players = findGame(headerAccessor).getPlayers();
-        return new WSShopMessage(player, players);
+        return new ShopMessage(player, players);
     }
 
     @MessageMapping("/game.putCardToTable")
     @SendToUser("/queue/game/shop/update")
-    public WSShopMessage putCardToTable(SimpMessageHeaderAccessor headerAccessor, @Header("simpSessionId") String sessionId,
-                                 @Payload int cardIndex) throws IncorrectPlayerActionException {
+    public ShopMessage putCardToTable(SimpMessageHeaderAccessor headerAccessor, @Header("simpSessionId") String sessionId,
+                                      @Payload int cardIndex) throws IncorrectPlayerActionException {
         Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.putCardToTable(player, cardIndex);
         List<Player> players = findGame(headerAccessor).getPlayers();
-        return new WSShopMessage(player, players);
+        return new ShopMessage(player, players);
     }
 
     @MessageMapping("/game.sellInventoryCard")
     @SendToUser("/queue/game/shop/update")
-    public WSShopMessage sellInventoryCard(SimpMessageHeaderAccessor headerAccessor,
-                                    @Header("simpSessionId") String sessionId, @Payload int cardIndex) {
+    public ShopMessage sellInventoryCard(SimpMessageHeaderAccessor headerAccessor,
+                                         @Header("simpSessionId") String sessionId, @Payload int cardIndex) {
         Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.sellInventoryCard(player, cardIndex);
         List<Player> players = findGame(headerAccessor).getPlayers();
-        return new WSShopMessage(player, players);
+        return new ShopMessage(player, players);
     }
 
     @MessageMapping("/game.sellActiveCard")
     @SendToUser("/queue/game/shop/update")
-    public WSShopMessage sellActiveCard(SimpMessageHeaderAccessor headerAccessor,
-                                 @Header("simpSessionId") String sessionId, @Payload int cardIndex) {
+    public ShopMessage sellActiveCard(SimpMessageHeaderAccessor headerAccessor,
+                                      @Header("simpSessionId") String sessionId, @Payload int cardIndex) {
         Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.sellActiveCard(player, cardIndex);
         List<Player> players = findGame(headerAccessor).getPlayers();
-        return new WSShopMessage(player, players);
+        return new ShopMessage(player, players);
     }
 
     @MessageMapping("/game.moveCardLeft")
     @SendToUser("/queue/game/shop/update")
-    public WSShopMessage moveCardToLeftOnTable(SimpMessageHeaderAccessor headerAccessor,
-                                               @Header("simpSessionId") String sessionId,
-                                               @Payload int cardIndex) throws IncorrectPlayerActionException {
+    public ShopMessage moveCardToLeftOnTable(SimpMessageHeaderAccessor headerAccessor,
+                                             @Header("simpSessionId") String sessionId,
+                                             @Payload int cardIndex) throws IncorrectPlayerActionException {
         Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.moveCardToLeftOnTable(player, cardIndex);
         List<Player> players = findGame(headerAccessor).getPlayers();
-        return new WSShopMessage(player, players);
+        return new ShopMessage(player, players);
     }
 
     @MessageMapping("/game.moveCardRight")
     @SendToUser("/queue/game/shop/update")
-    public WSShopMessage moveCardToRightOnTable(SimpMessageHeaderAccessor headerAccessor,
-                                         @Header("simpSessionId") String sessionId,
-                                         @Payload int cardIndex) throws IncorrectPlayerActionException {
+    public ShopMessage moveCardToRightOnTable(SimpMessageHeaderAccessor headerAccessor,
+                                              @Header("simpSessionId") String sessionId,
+                                              @Payload int cardIndex) throws IncorrectPlayerActionException {
         Player player = findPlayer(headerAccessor, sessionId);
         this.playerService.moveCardToRightOnTable(player, cardIndex);
         List<Player> players = findGame(headerAccessor).getPlayers();
-        return new WSShopMessage(player, players);
+        return new ShopMessage(player, players);
     }
 
     @MessageExceptionHandler(GameException.class)

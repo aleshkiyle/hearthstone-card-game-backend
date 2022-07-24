@@ -8,11 +8,14 @@ public class CardList extends CopyOnWriteArrayList<Card> implements Serializable
     private CopyOnWriteArrayList<Card> cardList;
 
 
-    public CardList(){}
-    public CardList(List<Card> cards){
+    public CardList() {
+    }
+
+    public CardList(List<Card> cards) {
         this.cardList = (CopyOnWriteArrayList<Card>) cards;
     }
-    public CopyOnWriteArrayList<Card> getCardList(){
+
+    public CopyOnWriteArrayList<Card> getCardList() {
         return this.cardList;
     }
 }

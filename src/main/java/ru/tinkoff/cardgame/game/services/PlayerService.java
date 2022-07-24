@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.tinkoff.cardgame.game.exceptions.IncorrectPlayerActionException;
 import ru.tinkoff.cardgame.game.model.card.Card;
 import ru.tinkoff.cardgame.game.model.card.Spell;
-import ru.tinkoff.cardgame.game.model.card.SpellController;
+import ru.tinkoff.cardgame.game.model.gamelogic.SpellController;
 import ru.tinkoff.cardgame.game.model.gamelogic.Player;
 import ru.tinkoff.cardgame.game.model.gamelogic.Shop;
 
@@ -17,13 +17,21 @@ public class PlayerService {
     private static final int SELL_CARD_PRICE = 1;
     private static final int MAX_CARD_COUNT = 7;
 
+    private final CardTripletService cardTripletService;
+
+    public PlayerService(CardTripletService cardTripletService) {
+        this.cardTripletService = cardTripletService;
+    }
+
     /*
     Buy a card from the store
      */
     public void buyCardFromShop(Player player, int cardIndex) throws IncorrectPlayerActionException {
         int price = player.getShop().getCardList().get(cardIndex).getPrice();
         if (player.getInvCards().size() < MAX_CARD_COUNT && price <= player.getGold()) {
-            player.getInvCards().add(player.getShop().buyCard(cardIndex));
+            Card card = player.getShop().buyCard(cardIndex);
+            cardTripletService.checkPlayerCardForTriplet(player, card);
+            player.getInvCards().add(card);
             player.decreaseGold(price);
         } else {
             throw new IncorrectPlayerActionException();
