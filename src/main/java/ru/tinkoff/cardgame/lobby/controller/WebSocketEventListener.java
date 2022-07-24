@@ -46,6 +46,12 @@ public class WebSocketEventListener {
             lobby.get().removeUser(sessionId);
             logger.info("LEAVE " + lobby);
 
+
+            if (lobby.get().getStatus() != LobbyStatus.CREATED) {
+                Game game = GameProvider.INSTANCE.findGame(lobby.get().getId());
+                game.kickPlayer(game.findPlayer(sessionId));
+            }
+
             if (lobby.get().getUsers().size() == 0) {
                 LobbiesProvider.INSTANCE.getLobbies().remove(lobby.get());
                 logger.info("REMOVE lobby " + lobby);
