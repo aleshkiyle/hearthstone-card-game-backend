@@ -18,6 +18,7 @@ public class Game {
     private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
     private static final int MAX_PLAYER_GOLD = 10;
+    private static final int ROUND_TIME = 60 ;
 
     private final Notificator notificator;
 
@@ -58,7 +59,7 @@ public class Game {
     private void startTimer() {
         logger.info("START TIMER");
         this.players.forEach(p -> notificator.notifyShopStart(p.getId(), p, this.players));
-        new Thread(new Timer(this, 15)).start();
+        new Thread(new Timer(this, ROUND_TIME)).start();
     }
 
     public void startFight() {

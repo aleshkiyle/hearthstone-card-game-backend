@@ -20,7 +20,7 @@ import java.util.Optional;
 @Service
 public class LobbyService {
 
-    private static final int MAX_PLAYERS = 2;
+    private static final int MAX_PLAYERS = 4;
 
     public ResponseEntity<String> checkLobby(String id) {
         Optional<Lobby> lobby = LobbiesProvider.INSTANCE.getLobbies().stream()

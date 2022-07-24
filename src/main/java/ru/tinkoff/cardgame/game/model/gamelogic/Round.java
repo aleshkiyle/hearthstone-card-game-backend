@@ -193,9 +193,19 @@ public class Round implements Runnable {
         List<Card> cardsOfDefence = cloneCards(players.get(1).getActiveCards());
 
         if (cardsOfAttack.size() == 0 && cardsOfDefence.size() != 0) {
+            if (this.isFirstPlayerFirstAttack) {
+                notifyUpdateFront(cardsOfAttack, cardsOfDefence);
+            } else {
+                notifyUpdateFront(cardsOfDefence, cardsOfAttack);
+            }
             //Карты только у защиты(Атака защиты(1) по герою Атаки(0))
             attackHero(cardsOfDefence, players.get(1), players.get(0));
         } else if (cardsOfDefence.size() == 0 && cardsOfAttack.size() != 0) {
+            if (this.isFirstPlayerFirstAttack) {
+                notifyUpdateFront(cardsOfAttack, cardsOfDefence);
+            } else {
+                notifyUpdateFront(cardsOfDefence, cardsOfAttack);
+            }
             //Карты только у атаки (Герой атаки(0) атакует героя защиты(1))
             attackHero(cardsOfAttack, players.get(0), players.get(1));
         } else {
