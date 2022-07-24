@@ -40,6 +40,12 @@ public class Shop {
         }
     }
 
+    public void fillShop() {
+        for (int i = 0; i < this.cardList.size() - this.shopCardNumber; i++) {
+            this.cardList.add(CardProvider.INSTANCE.getRandomLvlCard(this.level));
+        }
+    }
+
     public Card buyCard(int index) {
         return this.cardList.remove(index);
     }

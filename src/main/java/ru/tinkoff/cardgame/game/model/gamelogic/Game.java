@@ -17,7 +17,7 @@ public class Game {
     private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
     private static final int MAX_PLAYER_GOLD = 10;
-    private static final int ROUND_TIME = 30 ;
+    private static final int ROUND_TIME = 30;
 
     private final Notificator notificator;
 
@@ -78,7 +78,7 @@ public class Game {
     private void generateRounds() {
         this.rounds.clear();
         for (int i = 0; i < this.players.size(); i += 2) {
-            this.rounds.add(new Thread(new Round(notificator,  this.players.get(i),  this.players.get(i + 1))));
+            this.rounds.add(new Thread(new Round(notificator, this.players.get(i), this.players.get(i + 1))));
         }
     }
 
@@ -94,8 +94,8 @@ public class Game {
     }
 
     private void startNewRound() {
-        if (players.stream().filter(p->p.getHp()<=0).count() == 2) {
-            players.removeIf(p->p.getHp()<=0);
+        if (players.stream().filter(p -> p.getHp() <= 0).count() == 2) {
+            players.removeIf(p -> p.getHp() <= 0);
         }
         this.players.sort(Comparator.comparingInt(Player::getHp));
         players.forEach(p -> {
@@ -112,6 +112,8 @@ public class Game {
         players.forEach(p -> {
             if (p.getShop().isFreezeStatus()) {
                 p.getShop().setFreezeStatus(false);
+            } else if (p.getShop().getCardList().size() < p.getShop().getShopCardNumber()) {
+                p.getShop().fillShop();
             }
         });
         players.forEach(p -> p.setGold(p.getMaxGold()));
