@@ -11,14 +11,13 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game {
 
     private static final Logger logger = LoggerFactory.getLogger(Game.class);
 
     private static final int MAX_PLAYER_GOLD = 10;
-    private static final int ROUND_TIME = 60 ;
+    private static final int ROUND_TIME = 30 ;
 
     private final Notificator notificator;
 
@@ -78,10 +77,8 @@ public class Game {
 
     private void generateRounds() {
         this.rounds.clear();
-        List<Player> playerList = new CopyOnWriteArrayList<>(this.players);
-        playerList.sort(Comparator.comparingInt(Player::getHp));
-        for (int i = 0; i < playerList.size(); i += 2) {
-            this.rounds.add(new Thread(new Round(notificator, playerList.get(i), playerList.get(i + 1))));
+        for (int i = 0; i < this.players.size(); i += 2) {
+            this.rounds.add(new Thread(new Round(notificator,  this.players.get(i),  this.players.get(i + 1))));
         }
     }
 
@@ -97,6 +94,10 @@ public class Game {
     }
 
     private void startNewRound() {
+        if (players.stream().filter(p->p.getHp()<=0).count() == 2) {
+            players.removeIf(p->p.getHp()<=0);
+        }
+        this.players.sort(Comparator.comparingInt(Player::getHp));
         players.forEach(p -> {
             if (!p.getShop().isFreezeStatus()) {
                 p.getShop().updateShop();

@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 public class Round implements Runnable {
 
     private static final Logger logger = LoggerFactory.getLogger(Round.class);
+    private static final long ATTACK_TIME = 1;
     private final Notificator notificator;
     private final Player firstPlayer;
     private final Player secondPlayer;
@@ -135,7 +136,7 @@ public class Round implements Runnable {
         } else {
             notifyAttackFront(cardsOfDefence, cardsOfAttack, index, attackIndexLocal, a1);
         }
-        Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+        Thread.sleep(TimeUnit.SECONDS.toMillis(ATTACK_TIME));
 
         if (hp <= damage) { //если хп карты(например 1) <= чем урон ( например 2), то удаляем карту
             //TODO: Отправка на фронт события "уничтожение атакованной карты"
@@ -217,7 +218,7 @@ public class Round implements Runnable {
                 } else {
                     notifyUpdateFront(cardsOfDefence, cardsOfAttack);
                 }
-                Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+                Thread.sleep(TimeUnit.SECONDS.toMillis(ATTACK_TIME));
 
                 List<List<Card>> cards;
                 //Атака атаки
@@ -232,7 +233,7 @@ public class Round implements Runnable {
                     } else {
                         notifyUpdateFront(cardsOfDefence, cardsOfAttack);
                     }
-                    Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+                    Thread.sleep(TimeUnit.SECONDS.toMillis(ATTACK_TIME));
 
 
                     //Атака защиты
@@ -269,7 +270,7 @@ public class Round implements Runnable {
                 } else {
                     notifyUpdateFront(cardsOfDefence, cardsOfAttack);
                 }
-                Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+                Thread.sleep(TimeUnit.SECONDS.toMillis(ATTACK_TIME));
 
             }
 
@@ -278,7 +279,7 @@ public class Round implements Runnable {
             } else {
                 notifyUpdateFront(cardsOfDefence, cardsOfAttack);
             }
-            Thread.sleep(TimeUnit.SECONDS.toMillis(5));
+            Thread.sleep(TimeUnit.SECONDS.toMillis(ATTACK_TIME));
         }
 
     }
