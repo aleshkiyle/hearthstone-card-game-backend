@@ -41,7 +41,7 @@ public class Shop {
     }
 
     public void fillShop() {
-        for (int i = 0; i < this.cardList.size() - this.shopCardNumber; i++) {
+        for (int i = 0; i <this.shopCardNumber - this.cardList.size(); i++) {
             this.cardList.add(CardProvider.INSTANCE.getRandomLvlCard(this.level));
         }
     }

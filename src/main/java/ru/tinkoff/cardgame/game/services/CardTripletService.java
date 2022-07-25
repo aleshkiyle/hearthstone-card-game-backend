@@ -28,7 +28,7 @@ public class CardTripletService {
     private void updateStatsCard(Player player, Card card) {
         card.setTriplet(true);
         Optional<Card> currentCard = player.getActiveCards().stream()
-                .filter(c -> c.getName().equals(card.getName()))
+                .filter(c -> c.getName().equals(card.getName()) && !c.isTriplet())
                 .max(Comparator.comparingInt(c -> c.getDamage() + c.getHp()));
         if (currentCard.isPresent()) {
             card.setHp(currentCard.get().getHp() * INCREASE_CARD_NUMBER);
